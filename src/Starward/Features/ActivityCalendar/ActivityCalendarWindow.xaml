@@ -320,7 +320,7 @@
 
         <Grid Grid.Row="2">
             <ScrollViewer x:Name="ActivityScrollViewer"
-                          Padding="24,8,24,24"
+                          Padding="0,8,0,24"
                           HorizontalScrollBarVisibility="Disabled"
                           HorizontalScrollMode="Disabled"
                           VerticalScrollBarVisibility="Auto"
@@ -337,6 +337,7 @@
                                   BorderThickness="1"
                                   CornerRadius="6"
                                   Loaded="CardRoot_Loaded"
+                                  SizeChanged="CardRoot_SizeChanged"
                                   Opacity="{x:Bind CardOpacity}"
                                   PointerEntered="Card_PointerEntered"
                                   PointerExited="Card_PointerExited"
@@ -356,10 +357,10 @@
                                            RadiusY="2"
                                            Fill="{x:Bind AccentStripBrush}" />
 
-                                <!--  活动封面图（大尺寸，黑色描边 + 金属边框）  -->
+                                <!--  活动封面图（加宽完整显示，黑色描边 + 金属边框）  -->
                                 <Border Grid.Column="1"
-                                        Width="44"
-                                        Height="44"
+                                        Width="80"
+                                        Height="46"
                                         Margin="4,3,8,3"
                                         Background="#FF0A0B0D"
                                         BorderBrush="#FF000000"
@@ -369,12 +370,12 @@
                                             BorderThickness="1"
                                             CornerRadius="5">
                                         <sc:CachedImage Source="{x:Bind Banner}"
-                                                        Stretch="UniformToFill"
+                                                        Stretch="Uniform"
                                                         CornerRadius="5" />
                                     </Border>
                                 </Border>
 
-                                <!--  活动标题 + 时间  -->
+                                <!--  活动标题（简短短标题）+ 时间  -->
                                 <StackPanel Grid.Column="2"
                                             VerticalAlignment="Center"
                                             Spacing="2">
@@ -383,7 +384,7 @@
                                                FontWeight="SemiBold"
                                                CharacterSpacing="20"
                                                Foreground="#FFF2F3F5"
-                                               Text="{x:Bind Title}"
+                                               Text="{x:Bind ShortTitle}"
                                                TextTrimming="CharacterEllipsis" />
                                     <TextBlock MaxLines="1"
                                                FontSize="10.5"

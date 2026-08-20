@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Vanara.PInvoke;
+using Windows.Foundation;
 using Windows.Graphics;
 using Windows.System;
 using Windows.UI;
@@ -175,6 +176,7 @@ public sealed partial class ActivityCalendarWindow : WindowEx
 
     private void TimelineGrid_SizeChanged(object sender, SizeChangedEventArgs e)
     {
+        GanttLayout.TimelineWidth = TimelineGrid.ActualWidth;
         UpdateNowLinePosition(animate: false);
     }
 
@@ -341,8 +343,9 @@ public sealed partial class ActivityCalendarWindow : WindowEx
             Grid.SetColumnSpan(tickStrip, dayCount);
             railGrid.Children.Add(tickStrip);
 
-            // 甘特图布局的时间轴起点与顶部一致
+            // 甘特图布局的时间轴起点与宽度与顶部一致（保证坐标系对齐）
             GanttLayout.TimelineStart = _timelineStart;
+            GanttLayout.TimelineWidth = TimelineGrid.ActualWidth;
 
             TextBlock_NowCapsule.Text = DateTime.Now.ToString("MM/dd");
         }
@@ -511,6 +514,20 @@ public sealed partial class ActivityCalendarWindow : WindowEx
         if (sender is Grid grid && grid.FindName("HoverOverlay") is Border overlay)
         {
             overlay.Opacity = 1;
+        }
+    }
+
+
+
+
+    /// <summary>
+    /// 按条的实际尺寸裁剪内容，窄条时图片/文字不溢出
+    /// </summary>
+    private void CardRoot_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (sender is Grid grid)
+        {
+            grid.Clip = new RectangleGeometry { Rect = new Rect(0, 0, grid.ActualWidth, grid.ActualHeight) };
         }
     }
 

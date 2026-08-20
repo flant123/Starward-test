@@ -74,6 +74,19 @@ public class ActivityCalendarItem
     public string Title => Announcement.Title;
 
 
+    /// <summary>
+    /// 简短短标题：只保留「」或‘’内的内容（含符号），避免长标题在窄条上显示不全
+    /// </summary>
+    public string ShortTitle
+    {
+        get
+        {
+            var match = System.Text.RegularExpressions.Regex.Match(Title, "「[^」]*」|‘[^’]*’");
+            return match.Success ? match.Value : Title;
+        }
+    }
+
+
     public string Subtitle => Announcement.Subtitle;
 
 
