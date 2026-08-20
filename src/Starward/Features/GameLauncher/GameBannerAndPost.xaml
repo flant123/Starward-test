@@ -85,25 +85,36 @@
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
                 <Pivot.RightHeader>
-                    <Button Name="Button_InGameNotices"
-                            Margin="0,0,8,0"
-                            Command="{x:Bind OpenGameNoticeWindowCommand}"
-                            Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
-                            ToolTipService.ToolTip="{x:Bind lang:Lang.MainPage_GameNotices}"
-                            Visibility="Collapsed">
-                        <Grid>
+                    <StackPanel Margin="0,0,8,0"
+                                Orientation="Horizontal"
+                                Spacing="4">
+                        <Button x:Name="Button_ActivityCalendar"
+                                Command="{x:Bind OpenActivityCalendarWindowCommand}"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_Title}">
                             <FontIcon FontSize="18"
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                      Glyph="&#xE789;" />
-                            <Image Name="Image_GameNoticesAlert"
-                                   Width="20"
-                                   Margin="0,-8,-12,0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Top"
-                                   Source="ms-appx:///Assets/Image/alert.png"
-                                   Visibility="{x:Bind IsGameNoticesAlert}" />
-                        </Grid>
-                    </Button>
+                                      Glyph="&#xE787;" />
+                        </Button>
+                        <Button x:Name="Button_InGameNotices"
+                                Command="{x:Bind OpenGameNoticeWindowCommand}"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind lang:Lang.MainPage_GameNotices}"
+                                Visibility="Collapsed">
+                            <Grid>
+                                <FontIcon FontSize="18"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                          Glyph="&#xE789;" />
+                                <Image Name="Image_GameNoticesAlert"
+                                       Width="20"
+                                       Margin="0,-8,-12,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Top"
+                                       Source="ms-appx:///Assets/Image/alert.png"
+                                       Visibility="{x:Bind IsGameNoticesAlert}" />
+                            </Grid>
+                        </Button>
+                    </StackPanel>
                 </Pivot.RightHeader>
                 <Pivot.ItemTemplate>
                     <DataTemplate x:DataType="local:GamePostGroup">

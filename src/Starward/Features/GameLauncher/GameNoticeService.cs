@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Starward.Core;
 using Starward.Core.GameNotice;
 using Starward.Features.GameRecord;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
@@ -51,6 +52,17 @@ internal class GameNoticeService
             return false;
         }
         return await _gameNoticeClient.IsNoticeAlertAsync(gameBiz, uid, CultureInfo.CurrentUICulture.Name, cancellationToken);
+    }
+
+
+
+    /// <summary>
+    /// 获取游戏活动列表（活动日历数据）
+    /// </summary>
+    public async Task<List<GameAnnouncement>> GetActivityListAsync(GameBiz gameBiz, CancellationToken cancellationToken = default)
+    {
+        long uid = GetLastUid(gameBiz);
+        return await _gameNoticeClient.GetActivityListAsync(gameBiz, uid, CultureInfo.CurrentUICulture.Name, cancellationToken);
     }
 
 

@@ -58,6 +58,103 @@ public class GameNoticeClient
 
 
 
+    public static string GetAnnListUrl(GameBiz biz, long uid, string? lang = null)
+    {
+        lang = LanguageUtil.FilterLanguage(lang);
+        uid = uid == 0 ? 100000000 : uid;
+        return biz.Value switch
+        {
+            GameBiz.hk4e_cn or GameBiz.hk4e_bilibili => $"https://hk4e-ann-api.mihoyo.com/common/hk4e_cn/announcement/api/getAnnList?game=hk4e&game_biz=hk4e_cn&lang={lang}&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&level=60&uid={uid}",
+            GameBiz.hk4e_global => $"https://sg-hk4e-api.hoyoverse.com/common/hk4e_global/announcement/api/getAnnList?game=hk4e&game_biz=hk4e_global&lang={lang}&bundle_id=hk4e_global&platform=pc&region=os_asia&level=60&uid={uid}",
+            GameBiz.hkrpg_cn or GameBiz.hkrpg_bilibili => $"https://hkrpg-ann-api.mihoyo.com/common/hkrpg_cn/announcement/api/getAnnList?game=hkrpg&game_biz=hkrpg_cn&lang={lang}&bundle_id=hkrpg_cn&platform=pc&region=prod_gf_cn&level=70&uid={uid}",
+            GameBiz.hkrpg_global => $"https://sg-hkrpg-api.hoyoverse.com/common/hkrpg_global/announcement/api/getAnnList?game=hkrpg&game_biz=hkrpg_global&lang={lang}&bundle_id=hkrpg_global&platform=pc&region=prod_official_asia&level=1&uid={uid}",
+            GameBiz.bh3_cn => $"https://ann-api.mihoyo.com/common/bh3_cn/announcement/api/getAnnList?game=bh3&game_biz=bh3_cn&lang={lang}&bundle_id=bh3_cn&platform=pc&region=android01&level=88&uid={uid}",
+            GameBiz.bh3_global => $"https://sg-public-api.hoyoverse.com/common/bh3_global/announcement/api/getAnnList?game=bh3&game_biz=bh3_global&lang={lang}&bundle_id=bh3_os&platform=pc&region=overseas01&level=88&uid={uid}",
+            GameBiz.nap_cn or GameBiz.nap_bilibili => $"https://announcement-api.mihoyo.com/common/nap_cn/announcement/api/getAnnList?game=nap&game_biz=nap_cn&lang={lang}&bundle_id=nap_cn&platform=pc&region=prod_gf_cn&level=60&uid={uid}",
+            GameBiz.nap_global => $"https://sg-announcement-api.hoyoverse.com/common/nap_global/announcement/api/getAnnList?game=nap&game_biz=nap_global&lang={lang}&bundle_id=nap_global&platform=pc&region=prod_gf_jp&level=60&uid={uid}",
+            _ => throw new ArgumentOutOfRangeException($"Unknown region {biz}"),
+        };
+    }
+
+
+    /// <summary>
+    /// 公告详情页（getAnnContent）地址
+    /// </summary>
+    public static string GetAnnContentUrl(GameBiz biz, int annId, long uid, string? lang = null)
+    {
+        string url = GetAnnListUrl(biz, uid, lang);
+        return url.Replace("getAnnList", "getAnnContent") + $"&ann_id={annId}";
+    }
+
+
+    /// <summary>
+    /// 获取公告列表（getAnnList 接口）
+    /// </summary>
+    public async Task<AnnListData> GetAnnListAsync(GameBiz biz, long uid, string? lang = null, CancellationToken cancellationToken = default)
+    {
+        string url = GetAnnListUrl(biz, uid, lang);
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        return await CommonSendAsync<AnnListData>(request, cancellationToken);
+    }
+
+
+    /// <summary>
+    /// 获取游戏活动列表（活动日历数据源），按开始时间升序排列。
+    /// 优先取各游戏的活动公告类型；无独立活动类型的游戏（如星穹铁道）取全部带有效时间的公告。
+    /// </summary>
+    public async Task<List<GameAnnouncement>> GetActivityListAsync(GameBiz biz, long uid, string? lang = null, CancellationToken cancellationToken = default)
+    {
+        lang = LanguageUtil.FilterLanguage(lang);
+        uid = uid == 0 ? 100000000 : uid;
+        var data = await GetAnnListAsync(biz, uid, lang, cancellationToken);
+
+        // 各游戏的活动公告类型 ID
+        int[] activityTypeIds = biz.Game switch
+        {
+            "hk4e" => [1],
+            "nap" => [4],
+            "bh3" => [8000020],
+            _ => [],
+        };
+
+        List<GameAnnouncement> items;
+        if (activityTypeIds.Length > 0)
+        {
+            items = data.List.Where(g => activityTypeIds.Contains(g.TypeId)).SelectMany(g => g.List).ToList();
+            // 活动类型下暂无数据时（如绝区零偶尔将活动归入游戏公告），回退到带活动标签的公告
+            if (items.Count == 0)
+            {
+                items = data.List.SelectMany(g => g.List).Where(a => a.TagLabel.Contains("活动", StringComparison.Ordinal) || a.TagLabel.Contains("Event", StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+        else
+        {
+            // 星穹铁道没有独立的活动类型，取全部公告
+            items = data.List.SelectMany(g => g.List).ToList();
+        }
+
+        // 解析服务器时区的时间
+        foreach (var item in items)
+        {
+            item.ParseTime(data.Timezone);
+            item.GameBiz = biz;
+            item.ContentUrl = GetAnnContentUrl(biz, item.AnnId, uid, lang);
+            item.CleanHtmlText();
+        }
+
+        // 过滤没有有效起止时间的条目
+        var result = items.Where(a => a.StartTimeOffset != DateTimeOffset.MinValue && a.EndTimeOffset != DateTimeOffset.MinValue).ToList();
+
+        // 无独立活动类型的游戏（如星穹铁道），过滤长期有效的系统公告（如防沉迷声明、运营声明等）
+        if (activityTypeIds.Length == 0)
+        {
+            result = result.Where(a => (a.EndTimeOffset - a.StartTimeOffset).TotalDays <= 180).ToList();
+        }
+
+        return result.OrderBy(a => a.StartTimeOffset).ToList();
+    }
+
+
     public async Task<bool> IsNoticeAlertAsync(GameBiz biz, long uid, string? lang = null, CancellationToken cancellationToken = default)
     {
         lang = LanguageUtil.FilterLanguage(lang);

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Starward.Core.HoYoPlay;
+using Starward.Features.ActivityCalendar;
 using Starward.Features.HoYoPlay;
 using Starward.Features.ViewHost;
 using Starward.Helpers;
@@ -308,6 +309,22 @@ public sealed partial class GameBannerAndPost : UserControl
         try
         {
             new GameNoticeWindow
+            {
+                CurrentGameBiz = CurrentGameId.GameBiz,
+                ParentWindowHandle = (nint)this.XamlRoot.ContentIslandEnvironment.AppWindowId.Value
+            }.Activate();
+        }
+        catch { }
+    }
+
+
+
+    [RelayCommand]
+    private void OpenActivityCalendarWindow()
+    {
+        try
+        {
+            new ActivityCalendarWindow
             {
                 CurrentGameBiz = CurrentGameId.GameBiz,
                 ParentWindowHandle = (nint)this.XamlRoot.ContentIslandEnvironment.AppWindowId.Value
