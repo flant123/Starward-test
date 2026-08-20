@@ -2669,6 +2669,21 @@ You are welcome to submit the exported data to the following repository:</value>
   <data name="ActivityCalendar_OpenDetail" xml:space="preserve">
     <value>View details</value>
   </data>
+  <data name="ActivityCalendar_Week" xml:space="preserve">
+    <value>Week {0}</value>
+  </data>
+  <data name="ActivityCalendar_EndsInDays" xml:space="preserve">
+    <value>Ends in {0} day(s)</value>
+  </data>
+  <data name="ActivityCalendar_EndsToday" xml:space="preserve">
+    <value>Ends today</value>
+  </data>
+  <data name="ActivityCalendar_StartsInDays" xml:space="preserve">
+    <value>Starts in {0} day(s)</value>
+  </data>
+  <data name="ActivityCalendar_StartsToday" xml:space="preserve">
+    <value>Starts today</value>
+  </data>
   <data name="GameLauncherPage_PlayPause" xml:space="preserve">
     <value>Play / Pause</value>
   </data>

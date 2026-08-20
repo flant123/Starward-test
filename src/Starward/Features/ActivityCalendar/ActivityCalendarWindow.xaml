@@ -12,308 +12,565 @@
              mc:Ignorable="d">
 
     <Grid x:Name="RootGrid"
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-          Loaded="RootGrid_Loaded">
+          Background="#FF0B0D0F"
+          Loaded="RootGrid_Loaded"
+          SizeChanged="RootGrid_SizeChanged">
+
+        <Grid.Resources>
+
+            <!--  圆形进入按钮（黑色圆 + 银灰金属边框 + 白色箭头，悬停发光旋转）  -->
+            <Style x:Key="MetalCircleButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="#FF101010" />
+            <Setter Property="BorderBrush" Value="#FF9AA0A8" />
+            <Setter Property="BorderThickness" Value="1.5" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="ButtonBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="18">
+                                <ContentPresenter x:Name="ButtonContent"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <ContentPresenter.RenderTransform>
+                                        <RotateTransform x:Name="ContentRotate" Angle="0" />
+                                    </ContentPresenter.RenderTransform>
+                                </ContentPresenter>
+                            </Border>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ContentRotate"
+                                                             Storyboard.TargetProperty="Angle"
+                                                             To="0"
+                                                             Duration="0:0:0.18" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF9AA0A8" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ContentRotate"
+                                                             Storyboard.TargetProperty="Angle"
+                                                             To="90"
+                                                             Duration="0:0:0.18" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFB347" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderThickness">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="2" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF353535" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!--  金属小按钮（刷新）  -->
+        <Style x:Key="MetalIconButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="#FF1A1D21" />
+            <Setter Property="BorderBrush" Value="#FF5A6068" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="15" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="BtnBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="15">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFB347" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF30353C" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        </Grid.Resources>
+
 
         <Grid.RowDefinitions>
             <RowDefinition Height="48" />
-            <RowDefinition />
+            <RowDefinition Height="96" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  标题栏  -->
-        <Grid Padding="16,0,8,0">
+
+        <!-- ================= 背景层（机械纹理 / 网格 / 扫描线） ================= -->
+
+        <Grid Grid.RowSpan="3">
+
+            <!--  垂直网格线（活动区周轨道）  -->
+            <Grid Grid.Row="1" Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Rectangle Grid.Column="1" Width="1" HorizontalAlignment="Left" Fill="#0DFFFFFF" />
+                <Rectangle Grid.Column="2" Width="1" HorizontalAlignment="Left" Fill="#0DFFFFFF" />
+                <Rectangle Grid.Column="3" Width="1" HorizontalAlignment="Left" Fill="#0DFFFFFF" />
+                <Rectangle Grid.Column="4" Width="1" HorizontalAlignment="Left" Fill="#0DFFFFFF" />
+                <Rectangle Grid.Column="5" Width="1" HorizontalAlignment="Left" Fill="#0DFFFFFF" />
+            </Grid>
+
+            <!--  扫描线  -->
+            <Border Grid.RowSpan="3" IsHitTestVisible="False">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1" Opacity="0.35">
+                        <GradientStop Offset="0.00" Color="#00000000" />
+                        <GradientStop Offset="0.008" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.05" Color="#00000000" />
+                        <GradientStop Offset="0.058" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.10" Color="#00000000" />
+                        <GradientStop Offset="0.108" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.15" Color="#00000000" />
+                        <GradientStop Offset="0.158" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.20" Color="#00000000" />
+                        <GradientStop Offset="0.208" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.25" Color="#00000000" />
+                        <GradientStop Offset="0.258" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.30" Color="#00000000" />
+                        <GradientStop Offset="0.308" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.35" Color="#00000000" />
+                        <GradientStop Offset="0.358" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.40" Color="#00000000" />
+                        <GradientStop Offset="0.408" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.45" Color="#00000000" />
+                        <GradientStop Offset="0.458" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.50" Color="#00000000" />
+                        <GradientStop Offset="0.508" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.55" Color="#00000000" />
+                        <GradientStop Offset="0.558" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.60" Color="#00000000" />
+                        <GradientStop Offset="0.608" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.65" Color="#00000000" />
+                        <GradientStop Offset="0.658" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.70" Color="#00000000" />
+                        <GradientStop Offset="0.708" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.75" Color="#00000000" />
+                        <GradientStop Offset="0.758" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.80" Color="#00000000" />
+                        <GradientStop Offset="0.808" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.85" Color="#00000000" />
+                        <GradientStop Offset="0.858" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.90" Color="#00000000" />
+                        <GradientStop Offset="0.908" Color="#0DFFFFFF" />
+                        <GradientStop Offset="0.95" Color="#00000000" />
+                        <GradientStop Offset="0.958" Color="#0DFFFFFF" />
+                        <GradientStop Offset="1.00" Color="#00000000" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!--  上下边缘暗化  -->
+            <Border Grid.RowSpan="3" IsHitTestVisible="False">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0.0" Color="#66000000" />
+                        <GradientStop Offset="0.15" Color="#00000000" />
+                        <GradientStop Offset="0.85" Color="#00000000" />
+                        <GradientStop Offset="1.0" Color="#88000000" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!--  金属装饰条（顶部橙红渐变线）  -->
+            <Border Height="2"
+                    Margin="0,46,0,0"
+                    VerticalAlignment="Top">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Offset="0.0" Color="#00FF6A2A" />
+                        <GradientStop Offset="0.5" Color="#FFFF6A2A" />
+                        <GradientStop Offset="1.0" Color="#00FF6A2A" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!--  角落螺丝装饰  -->
+            <Grid Margin="10,8,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Ellipse Width="10" Height="10" Fill="#FF3A3E45" />
+                <Ellipse Width="4" Height="4" Fill="#FF17191C" />
+            </Grid>
+            <Grid Margin="0,8,10,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Ellipse Width="10" Height="10" Fill="#FF3A3E45" />
+                <Ellipse Width="4" Height="4" Fill="#FF17191C" />
+            </Grid>
+            <Grid Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <Ellipse Width="10" Height="10" Fill="#FF3A3E45" />
+                <Ellipse Width="4" Height="4" Fill="#FF17191C" />
+            </Grid>
+            <Grid Margin="0,0,10,10" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Ellipse Width="10" Height="10" Fill="#FF3A3E45" />
+                <Ellipse Width="4" Height="4" Fill="#FF17191C" />
+            </Grid>
+        </Grid>
+
+
+        <!-- ================= 标题栏 ================= -->
+
+        <Grid Grid.Row="0" Padding="44,0,16,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center"
                         Orientation="Horizontal"
-                        Spacing="8">
+                        Spacing="10">
                 <FontIcon FontSize="16"
-                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                          Foreground="#FFFF6A2A"
                           Glyph="&#xE787;"
                           IsTextScaleFactorEnabled="False" />
                 <TextBlock x:Name="TextBlock_Title"
                            VerticalAlignment="Center"
-                           FontSize="16"
+                           FontSize="15"
                            FontWeight="SemiBold"
+                           CharacterSpacing="80"
+                           Foreground="#FFE8EAED"
                            Text="{x:Bind lang:Lang.ActivityCalendar_Title}" />
+                <TextBlock VerticalAlignment="Center"
+                           FontSize="10"
+                           CharacterSpacing="120"
+                           Foreground="#665A6068"
+                           Text="ACTIVITY CONTROL // SW-CAL"
+                           IsTextScaleFactorEnabled="False" />
             </StackPanel>
             <Button Grid.Column="1"
                     VerticalAlignment="Center"
                     Command="{x:Bind RefreshCommand}"
-                    Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                    Style="{StaticResource MetalIconButtonStyle}"
                     ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_Refresh}">
-                <FontIcon FontSize="14"
-                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                <FontIcon FontSize="12"
+                          Foreground="#FFC8CDD3"
                           Glyph="&#xE72C;"
                           IsTextScaleFactorEnabled="False" />
             </Button>
         </Grid>
 
-        <!--  加载中  -->
+
+        <!-- ================= 时间轴（6 周） ================= -->
+
+        <Grid x:Name="TimelineGrid"
+              Grid.Row="1"
+              Padding="24,10,24,14"
+              SizeChanged="TimelineGrid_SizeChanged">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <!--  周标签（代码生成）  -->
+
+            <!--  时间轴底部刻度线  -->
+            <Border Grid.ColumnSpan="6"
+                    Height="1"
+                    Margin="0,0,0,4"
+                    VerticalAlignment="Bottom"
+                    Background="#3D5A6068" />
+        </Grid>
+
+
+        <!-- ================= 活动列表 ================= -->
+
+        <Grid Grid.Row="2">
+            <ScrollViewer x:Name="ActivityScrollViewer"
+                          Padding="24,8,24,24"
+                          HorizontalScrollBarVisibility="Disabled"
+                          HorizontalScrollMode="Disabled"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Auto">
+                <ItemsRepeater x:Name="ActivityRepeater" ItemsSource="{x:Bind Activities}">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Spacing="10" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="local:ActivityCalendarItem">
+                            <Grid x:Name="CardRoot"
+                                  Padding="14,10,14,10"
+                                  ColumnSpacing="14"
+                                  Background="{x:Bind CardBrush}"
+                                  BorderBrush="{x:Bind CardBorderBrush}"
+                                  BorderThickness="1"
+                                  CornerRadius="8"
+                                  Loaded="CardRoot_Loaded"
+                                  Opacity="{x:Bind CardOpacity}"
+                                  PointerEntered="Card_PointerEntered"
+                                  PointerExited="Card_PointerExited"
+                                  Tapped="ActivityItem_Tapped">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--  左侧：活动图标/横幅  -->
+                                <Grid Grid.Column="0" Width="64" Height="64">
+                                    <Border Width="64"
+                                            Height="64"
+                                            Background="#22000000"
+                                            BorderBrush="#668A8F98"
+                                            BorderThickness="1"
+                                            CornerRadius="6">
+                                        <sc:CachedImage Source="{x:Bind Banner}"
+                                                        Stretch="UniformToFill"
+                                                        CornerRadius="6" />
+                                    </Border>
+                                    <!--  已结束完成勾选  -->
+                                    <Border Width="20"
+                                            Height="20"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Background="#FF23262A"
+                                            BorderBrush="#FF8A8F98"
+                                            BorderThickness="1"
+                                            CornerRadius="10"
+                                            Visibility="{x:Bind ShowCheckmark}">
+                                        <FontIcon HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  FontSize="10"
+                                                  Foreground="#FFD5D9DE"
+                                                  Glyph="&#xE73E;"
+                                                  IsTextScaleFactorEnabled="False" />
+                                    </Border>
+                                    <!--  新活动闪烁提示  -->
+                                    <Ellipse x:Name="NewActivityDot"
+                                             Width="9"
+                                             Height="9"
+                                             Margin="0,0,-3,0"
+                                             HorizontalAlignment="Right"
+                                             VerticalAlignment="Top"
+                                             Fill="#FFFF4B45"
+                                             Visibility="{x:Bind IsNew}" />
+                                </Grid>
+
+                                <!--  中间：活动名称 + 时间  -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock MaxLines="1"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   CharacterSpacing="30"
+                                                   Foreground="#FFF2F3F5"
+                                                   Text="{x:Bind Title}"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <Ellipse Width="8"
+                                                 Height="8"
+                                                 VerticalAlignment="Center"
+                                                 Fill="{x:Bind StatusDotBrush}"
+                                                 Visibility="{x:Bind ShowStatusDot}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="14">
+                                        <TextBlock FontSize="12"
+                                                   CharacterSpacing="20"
+                                                   Foreground="#B3E8EAED"
+                                                   Text="{x:Bind TimeRangeText}" />
+                                        <TextBlock FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   CharacterSpacing="20"
+                                                   Foreground="#FFE8C36A"
+                                                   Text="{x:Bind RemainingText}" />
+                                        <TextBlock FontSize="11"
+                                                   CharacterSpacing="20"
+                                                   Foreground="#8CE8EAED"
+                                                   Text="{x:Bind TagLabel}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!--  右侧：状态 + 进入按钮  -->
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="14">
+                                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                                        <TextBlock HorizontalAlignment="Right"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   CharacterSpacing="60"
+                                                   Foreground="{x:Bind StatusBrush}"
+                                                   Text="{x:Bind StatusText}" />
+                                        <Border Height="2"
+                                                HorizontalAlignment="Right"
+                                                CornerRadius="1"
+                                                Background="{x:Bind StatusBrush}"
+                                                Opacity="0.55" />
+                                    </StackPanel>
+                                    <Button Click="EnterButton_Click"
+                                            Style="{StaticResource MetalCircleButtonStyle}"
+                                            ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_OpenDetail}">
+                                        <FontIcon FontSize="12"
+                                                  Foreground="#FFFFFFFF"
+                                                  Glyph="&#xE72A;"
+                                                  IsTextScaleFactorEnabled="False" />
+                                    </Button>
+                                </StackPanel>
+
+                                <!--  悬停高亮覆盖层  -->
+                                <Border x:Name="HoverOverlay"
+                                        Grid.ColumnSpan="3"
+                                        Background="#14FFFFFF"
+                                        CornerRadius="8"
+                                        IsHitTestVisible="False"
+                                        Opacity="0" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </ScrollViewer>
+
+            <!--  空状态  -->
+            <TextBlock x:Name="TextBlock_NoActivities"
+                       Margin="0,60,0,0"
+                       HorizontalAlignment="Center"
+                       FontSize="14"
+                       CharacterSpacing="80"
+                       Foreground="#8CE8EAED"
+                       Text="{x:Bind lang:Lang.ActivityCalendar_NoActivities}"
+                       Visibility="Collapsed" />
+        </Grid>
+
+
+        <!-- ================= 红色定位线（当前日期，贯穿时间轴与活动区） ================= -->
+
+        <Canvas x:Name="NowLineCanvas"
+                Grid.Row="1"
+                Grid.RowSpan="2"
+                IsHitTestVisible="False">
+
+            <!--  当前日期红色胶囊  -->
+            <Border x:Name="NowCapsule"
+                    MinWidth="56"
+                    Height="26"
+                    Padding="8,0,8,0"
+                    CornerRadius="13"
+                    Background="#FFE04440">
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Spacing="5">
+                    <Ellipse Width="6"
+                             Height="6"
+                             VerticalAlignment="Center"
+                             Fill="#FFFFFFFF" />
+                    <TextBlock x:Name="TextBlock_NowCapsule"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               CharacterSpacing="20"
+                               Foreground="#FFFFFFFF"
+                               IsTextScaleFactorEnabled="False" />
+                </StackPanel>
+            </Border>
+
+            <!--  红色垂直定位线  -->
+            <Rectangle x:Name="NowLine"
+                       Width="2"
+                       RadiusX="1"
+                       RadiusY="1"
+                       Fill="#DDFF4B45" />
+
+            <!--  定位线底部圆形终点  -->
+            <Ellipse x:Name="NowLineDot"
+                     Width="10"
+                     Height="10"
+                     Fill="#FFFF4B45" />
+        </Canvas>
+
+
+        <!-- ================= 加载中 ================= -->
+
         <StackPanel x:Name="StackPanel_Loading"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Spacing="12"
+                    Spacing="14"
                     Visibility="Collapsed">
-            <ProgressRing Width="48"
-                          Height="48"
+            <ProgressRing Width="44"
+                          Height="44"
                           HorizontalAlignment="Center"
+                          Foreground="#FFFF6A2A"
                           IsIndeterminate="True" />
             <TextBlock HorizontalAlignment="Center"
-                       FontSize="14"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       FontSize="12"
+                       CharacterSpacing="100"
+                       Foreground="#8CE8EAED"
                        Text="{x:Bind lang:Lang.ActivityCalendar_Loading}" />
         </StackPanel>
 
-        <!--  加载失败  -->
+
+        <!-- ================= 加载失败 ================= -->
+
         <StackPanel x:Name="StackPanel_Error"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Spacing="8"
+                    Spacing="10"
                     Visibility="Collapsed">
             <FontIcon HorizontalAlignment="Center"
-                      FontSize="32"
-                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                      FontSize="30"
+                      Foreground="#FFFF6A2A"
                       Glyph="&#xE7BA;"
                       IsTextScaleFactorEnabled="False" />
             <TextBlock x:Name="TextBlock_Error"
-                       MaxWidth="360"
-                       FontSize="14"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                       MaxWidth="380"
+                       FontSize="13"
+                       CharacterSpacing="30"
+                       Foreground="#8CE8EAED"
                        TextAlignment="Center"
                        TextWrapping="Wrap" />
         </StackPanel>
-
-        <!--  活动列表  -->
-        <Pivot x:Name="Pivot_Activities"
-               Grid.Row="1"
-               Visibility="Collapsed">
-            <Pivot.Resources>
-                <Thickness x:Key="PivotItemMargin">0,0,0,0</Thickness>
-                <Thickness x:Key="PivotHeaderItemMargin">24,0,24,0</Thickness>
-            </Pivot.Resources>
-
-            <!--  进行中  -->
-            <PivotItem Header="{x:Bind lang:Lang.ActivityCalendar_Ongoing}">
-                <Grid>
-                    <ScrollViewer Padding="24,8,24,24"
-                                  HorizontalScrollBarVisibility="Disabled"
-                                  HorizontalScrollMode="Disabled"
-                                  VerticalScrollBarVisibility="Auto">
-                        <ItemsRepeater ItemsSource="{x:Bind OngoingActivities}">
-                            <ItemsRepeater.Layout>
-                                <StackLayout Spacing="8" />
-                            </ItemsRepeater.Layout>
-                            <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="local:ActivityCalendarItem">
-                                    <Grid Padding="12"
-                                          ColumnSpacing="12"
-                                          Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                          CornerRadius="8"
-                                          Tapped="ActivityItem_Tapped">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="132" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <sc:CachedImage Width="132"
-                                                        Height="74"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        CornerRadius="6"
-                                                        Source="{x:Bind Banner}"
-                                                        Stretch="UniformToFill" />
-                                        <StackPanel Grid.Column="1"
-                                                    VerticalAlignment="Center"
-                                                    Spacing="4">
-                                            <TextBlock MaxLines="2"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Text="{x:Bind Title}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{x:Bind TimeRangeText}" />
-                                            <StackPanel Orientation="Horizontal"
-                                                        Spacing="8">
-                                                <Border Padding="6,1,6,1"
-                                                        Background="{x:Bind StatusBrush}"
-                                                        CornerRadius="4">
-                                                    <TextBlock FontSize="10"
-                                                               Foreground="White"
-                                                               IsTextScaleFactorEnabled="False"
-                                                               Text="{x:Bind StatusText}" />
-                                                </Border>
-                                                <TextBlock VerticalAlignment="Center"
-                                                           FontSize="11"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           IsTextScaleFactorEnabled="False"
-                                                           Text="{x:Bind TagLabel}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsRepeater.ItemTemplate>
-                        </ItemsRepeater>
-                    </ScrollViewer>
-                    <TextBlock x:Name="TextBlock_NoOngoing"
-                               Margin="0,40,0,0"
-                               HorizontalAlignment="Center"
-                               FontSize="14"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind lang:Lang.ActivityCalendar_NoActivities}"
-                               Visibility="Collapsed" />
-                </Grid>
-            </PivotItem>
-
-            <!--  即将开始  -->
-            <PivotItem Header="{x:Bind lang:Lang.ActivityCalendar_Upcoming}">
-                <Grid>
-                    <ScrollViewer Padding="24,8,24,24"
-                                  HorizontalScrollBarVisibility="Disabled"
-                                  HorizontalScrollMode="Disabled"
-                                  VerticalScrollBarVisibility="Auto">
-                        <ItemsRepeater ItemsSource="{x:Bind UpcomingActivities}">
-                            <ItemsRepeater.Layout>
-                                <StackLayout Spacing="8" />
-                            </ItemsRepeater.Layout>
-                            <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="local:ActivityCalendarItem">
-                                    <Grid Padding="12"
-                                          ColumnSpacing="12"
-                                          Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                          CornerRadius="8"
-                                          Tapped="ActivityItem_Tapped">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="132" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <sc:CachedImage Width="132"
-                                                        Height="74"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        CornerRadius="6"
-                                                        Source="{x:Bind Banner}"
-                                                        Stretch="UniformToFill" />
-                                        <StackPanel Grid.Column="1"
-                                                    VerticalAlignment="Center"
-                                                    Spacing="4">
-                                            <TextBlock MaxLines="2"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Text="{x:Bind Title}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{x:Bind TimeRangeText}" />
-                                            <StackPanel Orientation="Horizontal"
-                                                        Spacing="8">
-                                                <Border Padding="6,1,6,1"
-                                                        Background="{x:Bind StatusBrush}"
-                                                        CornerRadius="4">
-                                                    <TextBlock FontSize="10"
-                                                               Foreground="White"
-                                                               IsTextScaleFactorEnabled="False"
-                                                               Text="{x:Bind StatusText}" />
-                                                </Border>
-                                                <TextBlock VerticalAlignment="Center"
-                                                           FontSize="11"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           IsTextScaleFactorEnabled="False"
-                                                           Text="{x:Bind TagLabel}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsRepeater.ItemTemplate>
-                        </ItemsRepeater>
-                    </ScrollViewer>
-                    <TextBlock x:Name="TextBlock_NoUpcoming"
-                               Margin="0,40,0,0"
-                               HorizontalAlignment="Center"
-                               FontSize="14"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind lang:Lang.ActivityCalendar_NoActivities}"
-                               Visibility="Collapsed" />
-                </Grid>
-            </PivotItem>
-
-            <!--  已结束  -->
-            <PivotItem Header="{x:Bind lang:Lang.ActivityCalendar_Ended}">
-                <Grid>
-                    <ScrollViewer Padding="24,8,24,24"
-                                  HorizontalScrollBarVisibility="Disabled"
-                                  HorizontalScrollMode="Disabled"
-                                  VerticalScrollBarVisibility="Auto">
-                        <ItemsRepeater ItemsSource="{x:Bind EndedActivities}">
-                            <ItemsRepeater.Layout>
-                                <StackLayout Spacing="8" />
-                            </ItemsRepeater.Layout>
-                            <ItemsRepeater.ItemTemplate>
-                                <DataTemplate x:DataType="local:ActivityCalendarItem">
-                                    <Grid Padding="12"
-                                          ColumnSpacing="12"
-                                          Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                          CornerRadius="8"
-                                          Tapped="ActivityItem_Tapped">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="132" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <sc:CachedImage Width="132"
-                                                        Height="74"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        CornerRadius="6"
-                                                        Source="{x:Bind Banner}"
-                                                        Stretch="UniformToFill" />
-                                        <StackPanel Grid.Column="1"
-                                                    VerticalAlignment="Center"
-                                                    Spacing="4">
-                                            <TextBlock MaxLines="2"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Text="{x:Bind Title}"
-                                                       TextTrimming="CharacterEllipsis" />
-                                            <TextBlock FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{x:Bind TimeRangeText}" />
-                                            <StackPanel Orientation="Horizontal"
-                                                        Spacing="8">
-                                                <Border Padding="6,1,6,1"
-                                                        Background="{x:Bind StatusBrush}"
-                                                        CornerRadius="4">
-                                                    <TextBlock FontSize="10"
-                                                               Foreground="White"
-                                                               IsTextScaleFactorEnabled="False"
-                                                               Text="{x:Bind StatusText}" />
-                                                </Border>
-                                                <TextBlock VerticalAlignment="Center"
-                                                           FontSize="11"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                           IsTextScaleFactorEnabled="False"
-                                                           Text="{x:Bind TagLabel}" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsRepeater.ItemTemplate>
-                        </ItemsRepeater>
-                    </ScrollViewer>
-                    <TextBlock x:Name="TextBlock_NoEnded"
-                               Margin="0,40,0,0"
-                               HorizontalAlignment="Center"
-                               FontSize="14"
-                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                               Text="{x:Bind lang:Lang.ActivityCalendar_NoActivities}"
-                               Visibility="Collapsed" />
-                </Grid>
-            </PivotItem>
-
-        </Pivot>
 
     </Grid>
 

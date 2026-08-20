@@ -2669,6 +2669,21 @@
   <data name="ActivityCalendar_OpenDetail" xml:space="preserve">
     <value>查看详情</value>
   </data>
+  <data name="ActivityCalendar_Week" xml:space="preserve">
+    <value>第{0}周</value>
+  </data>
+  <data name="ActivityCalendar_EndsInDays" xml:space="preserve">
+    <value>剩余 {0} 天</value>
+  </data>
+  <data name="ActivityCalendar_EndsToday" xml:space="preserve">
+    <value>今日结束</value>
+  </data>
+  <data name="ActivityCalendar_StartsInDays" xml:space="preserve">
+    <value>{0} 天后开启</value>
+  </data>
+  <data name="ActivityCalendar_StartsToday" xml:space="preserve">
+    <value>今日开启</value>
+  </data>
   <data name="GameLauncherPage_PlayPause" xml:space="preserve">
     <value>播放 / 暂停</value>
   </data>

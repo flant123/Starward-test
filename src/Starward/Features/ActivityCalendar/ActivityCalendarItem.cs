@@ -65,7 +65,7 @@ public class ActivityCalendarItem
 
 
     /// <summary>
-    /// 活动时间范围（本地时间）
+    /// 活动时间范围（本地时间，紧凑格式）
     /// </summary>
     public string TimeRangeText
     {
@@ -73,7 +73,7 @@ public class ActivityCalendarItem
         {
             var start = Announcement.StartTimeOffset.ToLocalTime();
             var end = Announcement.EndTimeOffset.ToLocalTime();
-            return $"{start:yyyy-MM-dd HH:mm} ~ {end:MM-dd HH:mm}";
+            return $"{start:MM/dd HH:mm} ~ {end:MM/dd HH:mm}";
         }
     }
 
@@ -87,22 +87,179 @@ public class ActivityCalendarItem
     };
 
 
-    public SolidColorBrush StatusBrush => Status switch
+    /// <summary>
+    /// 剩余/开启时间提示，如「剩余 5 天」「3 天后开启」
+    /// </summary>
+    public string RemainingText
     {
-        ActivityStatus.Ongoing => GetThemeBrush("SystemFillColorSuccessBrush", Color.FromArgb(0xFF, 0x0F, 0x7B, 0x0F)),
-        ActivityStatus.Upcoming => GetThemeBrush("AccentFillColorDefaultBrush", Color.FromArgb(0xFF, 0x00, 0x5F, 0xC7)),
-        ActivityStatus.Ended => GetThemeBrush("TextFillColorSecondaryBrush", Color.FromArgb(0xFF, 0x8A, 0x8A, 0x8A)),
+        get
+        {
+            var now = DateTimeOffset.Now;
+            switch (Status)
+            {
+                case ActivityStatus.Ongoing:
+                    double daysLeft = (Announcement.EndTimeOffset - now).TotalDays;
+                    return daysLeft <= 1 ? Lang.ActivityCalendar_EndsToday : string.Format(Lang.ActivityCalendar_EndsInDays, (int)Math.Ceiling(daysLeft));
+                case ActivityStatus.Upcoming:
+                    double daysToStart = (Announcement.StartTimeOffset - now).TotalDays;
+                    return daysToStart <= 1 ? Lang.ActivityCalendar_StartsToday : string.Format(Lang.ActivityCalendar_StartsInDays, (int)Math.Ceiling(daysToStart));
+                default:
+                    return Lang.ActivityCalendar_Ended;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 活动条背景渐变（左深右亮）
+    /// </summary>
+    public Brush CardBrush => Status switch
+    {
+        ActivityStatus.Ongoing => OngoingCardBrush,
+        ActivityStatus.Upcoming => UpcomingCardBrush,
+        ActivityStatus.Ended => EndedCardBrush,
+        _ => UpcomingCardBrush,
+    };
+
+
+    /// <summary>
+    /// 活动条金属边框
+    /// </summary>
+    public Brush CardBorderBrush => Status switch
+    {
+        ActivityStatus.Ongoing => OngoingCardBorderBrush,
+        ActivityStatus.Upcoming => UpcomingCardBorderBrush,
+        ActivityStatus.Ended => EndedCardBorderBrush,
+        _ => UpcomingCardBorderBrush,
+    };
+
+
+    /// <summary>
+    /// 已结束的活动降低亮度
+    /// </summary>
+    public bool IsDimmed => Status == ActivityStatus.Ended;
+
+
+    /// <summary>
+    /// 卡片透明度（已结束的活动半透明）
+    /// </summary>
+    public double CardOpacity => IsDimmed ? 0.55 : 1.0;
+
+
+    /// <summary>
+    /// 已结束的活动显示完成勾选
+    /// </summary>
+    public bool ShowCheckmark => Status == ActivityStatus.Ended;
+
+
+    /// <summary>
+    /// 进行中的活动显示黄色状态点
+    /// </summary>
+    public bool ShowStatusDot => Status == ActivityStatus.Ongoing;
+
+
+    /// <summary>
+    /// 新活动（标签为 NEW 或 24 小时内开始）显示红色闪烁提示
+    /// </summary>
+    public bool IsNew
+    {
+        get
+        {
+            if (Announcement.TagLabel.Contains("NEW", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            return Announcement.StartTimeOffset > DateTimeOffset.Now.AddDays(-1);
+        }
+    }
+
+
+    public Brush StatusDotBrush => StatusBrush;
+
+
+    public Brush StatusBrush => Status switch
+    {
+        ActivityStatus.Ongoing => new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xC9, 0x3D)),
+        ActivityStatus.Upcoming => new SolidColorBrush(Color.FromArgb(0xFF, 0x9A, 0xA0, 0xA8)),
+        ActivityStatus.Ended => new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0x66, 0x5C)),
         _ => new SolidColorBrush(Colors.Gray),
     };
 
 
-    private static SolidColorBrush GetThemeBrush(string key, Color fallbackColor)
+    // ---- 静态渐变画刷（活动条左深右亮，橙红主色） ----
+
+    private static readonly Brush OngoingCardBrush = new LinearGradientBrush
     {
-        if (Application.Current.Resources.TryGetValue(key, out object? value) && value is SolidColorBrush brush)
+        StartPoint = new Windows.Foundation.Point(0, 0.5),
+        EndPoint = new Windows.Foundation.Point(1, 0.5),
+        GradientStops =
         {
-            return brush;
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x8F, 0x26, 0x0D), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0xC5, 0x43, 0x14), Offset = 0.55 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0x74, 0x28), Offset = 1.0 },
         }
-        return new SolidColorBrush(fallbackColor);
-    }
+    };
+
+
+    private static readonly Brush UpcomingCardBrush = new LinearGradientBrush
+    {
+        StartPoint = new Windows.Foundation.Point(0, 0.5),
+        EndPoint = new Windows.Foundation.Point(1, 0.5),
+        GradientStops =
+        {
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x22, 0x25, 0x2B), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x2E, 0x32, 0x38), Offset = 0.6 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x3A, 0x3E, 0x45), Offset = 1.0 },
+        }
+    };
+
+
+    private static readonly Brush EndedCardBrush = new LinearGradientBrush
+    {
+        StartPoint = new Windows.Foundation.Point(0, 0.5),
+        EndPoint = new Windows.Foundation.Point(1, 0.5),
+        GradientStops =
+        {
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x33, 0x2A, 0x22), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x44, 0x36, 0x2A), Offset = 0.6 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x54, 0x42, 0x31), Offset = 1.0 },
+        }
+    };
+
+
+    private static readonly Brush OngoingCardBorderBrush = new LinearGradientBrush
+    {
+        StartPoint = new Windows.Foundation.Point(0, 0),
+        EndPoint = new Windows.Foundation.Point(1, 1),
+        GradientStops =
+        {
+            new GradientStop { Color = Color.FromArgb(0xFF, 0xFF, 0x8A, 0x3D), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x5A, 0x1E, 0x0A), Offset = 1.0 },
+        }
+    };
+
+
+    private static readonly Brush UpcomingCardBorderBrush = new LinearGradientBrush
+    {
+        StartPoint = new Windows.Foundation.Point(0, 0),
+        EndPoint = new Windows.Foundation.Point(1, 1),
+        GradientStops =
+        {
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x6E, 0x74, 0x7C), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x35, 0x39, 0x3F), Offset = 1.0 },
+        }
+    };
+
+
+    private static readonly Brush EndedCardBorderBrush = new LinearGradientBrush
+    {
+        StartPoint = new Windows.Foundation.Point(0, 0),
+        EndPoint = new Windows.Foundation.Point(1, 1),
+        GradientStops =
+        {
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x6E, 0x5C, 0x48), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x33, 0x2A, 0x22), Offset = 1.0 },
+        }
+    };
 
 }

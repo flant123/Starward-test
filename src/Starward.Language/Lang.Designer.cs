@@ -151,6 +151,51 @@ namespace Starward.Language {
         }
         
         /// <summary>
+        ///   查找类似 Week {0} 的本地化字符串。
+        /// </summary>
+        public static string ActivityCalendar_Week {
+            get {
+                return ResourceManager.GetString("ActivityCalendar_Week", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Ends in {0} day(s) 的本地化字符串。
+        /// </summary>
+        public static string ActivityCalendar_EndsInDays {
+            get {
+                return ResourceManager.GetString("ActivityCalendar_EndsInDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Ends today 的本地化字符串。
+        /// </summary>
+        public static string ActivityCalendar_EndsToday {
+            get {
+                return ResourceManager.GetString("ActivityCalendar_EndsToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Starts in {0} day(s) 的本地化字符串。
+        /// </summary>
+        public static string ActivityCalendar_StartsInDays {
+            get {
+                return ResourceManager.GetString("ActivityCalendar_StartsInDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Starts today 的本地化字符串。
+        /// </summary>
+        public static string ActivityCalendar_StartsToday {
+            get {
+                return ResourceManager.GetString("ActivityCalendar_StartsToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Click button to repair files. 的本地化字符串。
         /// </summary>
         public static string AboutSettingPage_ClickButtonToRepairFiles {
