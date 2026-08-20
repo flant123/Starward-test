@@ -96,6 +96,15 @@
                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                       Glyph="&#xE787;" />
                         </Button>
+                        <Button x:Name="Button_CharacterGuide"
+                                Command="{x:Bind OpenCharacterGuideCommand}"
+                                Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_CharacterGuide}"
+                                Visibility="Collapsed">
+                            <FontIcon FontSize="18"
+                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                      Glyph="&#xE8F1;" />
+                        </Button>
                         <Button x:Name="Button_InGameNotices"
                                 Command="{x:Bind OpenGameNoticeWindowCommand}"
                                 Style="{ThemeResource DateTimePickerFlyoutButtonStyle}"

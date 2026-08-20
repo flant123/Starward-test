@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Starward.Core;
 using Starward.Core.HoYoPlay;
 using Starward.Features.ActivityCalendar;
 using Starward.Features.HoYoPlay;
@@ -195,6 +196,9 @@ public sealed partial class GameBannerAndPost : UserControl
     {
         try
         {
+            // 养成指南仅绝区零提供官方网页
+            Button_CharacterGuide.Visibility = CurrentGameId.GameBiz.Game == GameBiz.nap ? Visibility.Visible : Visibility.Collapsed;
+
             if (GameFeatureConfig.FromGameId(CurrentGameId).InGameNoticesWindow)
             {
                 Button_InGameNotices.Visibility = Visibility.Visible;
@@ -327,6 +331,21 @@ public sealed partial class GameBannerAndPost : UserControl
             new ActivityCalendarWindow
             {
                 CurrentGameBiz = CurrentGameId.GameBiz,
+                ParentWindowHandle = (nint)this.XamlRoot.ContentIslandEnvironment.AppWindowId.Value
+            }.Activate();
+        }
+        catch { }
+    }
+
+
+
+    [RelayCommand]
+    private void OpenCharacterGuide()
+    {
+        try
+        {
+            new CharacterGuideWindow
+            {
                 ParentWindowHandle = (nint)this.XamlRoot.ContentIslandEnvironment.AppWindowId.Value
             }.Activate();
         }

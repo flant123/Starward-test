@@ -157,8 +157,6 @@ public sealed partial class ActivityCalendarWindow : WindowEx
     {
         RootGrid.Loaded -= RootGrid_Loaded;
         TextBlock_Title.Text = $"{CurrentGameBiz.ToGameName()} · {Lang.ActivityCalendar_Title}";
-        // 养成指南仅绝区零提供官方网页
-        Button_CharacterGuide.Visibility = CurrentGameBiz.Game == GameBiz.nap ? Visibility.Visible : Visibility.Collapsed;
         BuildTimeline();
         UpdateNowLinePosition(animate: false);
         await LoadActivitiesAsync();
@@ -506,27 +504,6 @@ public sealed partial class ActivityCalendarWindow : WindowEx
     private void Refresh()
     {
         _ = LoadActivitiesAsync();
-    }
-
-
-
-    /// <summary>
-    /// 打开绝区零官方养成指南（WebView2 嵌入）
-    /// </summary>
-    [RelayCommand]
-    private void OpenCharacterGuide()
-    {
-        try
-        {
-            new CharacterGuideWindow
-            {
-                ParentWindowHandle = (nint)RootGrid.XamlRoot.ContentIslandEnvironment.AppWindowId.Value
-            }.Activate();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Open character guide");
-        }
     }
 
 
