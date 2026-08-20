@@ -451,18 +451,31 @@
                        Text="{x:Bind lang:Lang.ActivityCalendar_NoActivities}"
                        Visibility="Collapsed" />
 
-            <!--  刷新按钮（右下角，避开窗口关闭键）  -->
-            <Button Margin="0,0,36,28"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Command="{x:Bind RefreshCommand}"
-                    Style="{StaticResource MetalIconButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_Refresh}">
-                <FontIcon FontSize="12"
-                          Foreground="#FFC8CDD3"
-                          Glyph="&#xE72C;"
-                          IsTextScaleFactorEnabled="False" />
-            </Button>
+            <!--  右下角工具按钮（养成指南 + 刷新）  -->
+            <StackPanel Margin="0,0,36,28"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                <Button x:Name="Button_CharacterGuide"
+                        Command="{x:Bind OpenCharacterGuideCommand}"
+                        Style="{StaticResource MetalIconButtonStyle}"
+                        ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_CharacterGuide}"
+                        Visibility="Collapsed">
+                    <FontIcon FontSize="12"
+                              Foreground="#FFC8CDD3"
+                              Glyph="&#xE8F1;"
+                              IsTextScaleFactorEnabled="False" />
+                </Button>
+                <Button Command="{x:Bind RefreshCommand}"
+                        Style="{StaticResource MetalIconButtonStyle}"
+                        ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_Refresh}">
+                    <FontIcon FontSize="12"
+                              Foreground="#FFC8CDD3"
+                              Glyph="&#xE72C;"
+                              IsTextScaleFactorEnabled="False" />
+                </Button>
+            </StackPanel>
         </Grid>
 
 

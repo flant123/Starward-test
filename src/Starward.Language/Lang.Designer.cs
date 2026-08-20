@@ -151,6 +151,15 @@ namespace Starward.Language {
         }
         
         /// <summary>
+        ///   查找类似 Character Guide 的本地化字符串。
+        /// </summary>
+        public static string ActivityCalendar_CharacterGuide {
+            get {
+                return ResourceManager.GetString("ActivityCalendar_CharacterGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Week {0} 的本地化字符串。
         /// </summary>
         public static string ActivityCalendar_Week {

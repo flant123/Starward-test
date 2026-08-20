@@ -2669,6 +2669,9 @@ You are welcome to submit the exported data to the following repository:</value>
   <data name="ActivityCalendar_OpenDetail" xml:space="preserve">
     <value>View details</value>
   </data>
+  <data name="ActivityCalendar_CharacterGuide" xml:space="preserve">
+    <value>Character Guide</value>
+  </data>
   <data name="ActivityCalendar_Week" xml:space="preserve">
     <value>Week {0}</value>
   </data>
