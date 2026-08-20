@@ -67,6 +67,17 @@ internal class GameNoticeService
 
 
 
+    /// <summary>
+    /// 获取活动公告内容 HTML（用于提取资源图片）
+    /// </summary>
+    public async Task<string?> GetActivityContentAsync(GameBiz gameBiz, int annId, CancellationToken cancellationToken = default)
+    {
+        long uid = GetLastUid(gameBiz);
+        return await _gameNoticeClient.GetAnnContentAsync(gameBiz, uid, annId, CultureInfo.CurrentUICulture.Name, cancellationToken);
+    }
+
+
+
 
     private long GetLastUid(GameBiz gameBiz)
     {

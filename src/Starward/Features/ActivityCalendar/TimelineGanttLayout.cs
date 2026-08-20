@@ -20,7 +20,7 @@ public class TimelineGanttLayout : VirtualizingLayout
     /// <summary>
     /// 行高
     /// </summary>
-    public const double RowHeight = 40;
+    public const double RowHeight = 52;
 
 
     /// <summary>

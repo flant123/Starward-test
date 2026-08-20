@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Media;
 using Starward.Core.GameNotice;
 using Starward.Language;
 using System;
+using System.Collections.ObjectModel;
 using Windows.UI;
 
 namespace Starward.Features.ActivityCalendar;
@@ -47,6 +48,27 @@ public class ActivityCalendarItem
         Announcement = announcement;
         Status = status;
     }
+
+
+    /// <summary>
+    /// 活动详情中的资源图片（异步加载）
+    /// </summary>
+    public ObservableCollection<string> RewardImageUrls { get; } = [];
+
+
+    /// <summary>
+    /// 是否已请求过资源图片
+    /// </summary>
+    internal bool RewardImagesRequested { get; set; }
+
+
+    /// <summary>
+    /// 是否祈愿/调频类活动（祈愿、调频、跃迁、补给），置顶显示
+    /// </summary>
+    public bool IsGacha => Announcement.Title.Contains("祈愿", StringComparison.Ordinal)
+                        || Announcement.Title.Contains("调频", StringComparison.Ordinal)
+                        || Announcement.Title.Contains("跃迁", StringComparison.Ordinal)
+                        || Announcement.Title.Contains("补给", StringComparison.Ordinal);
 
 
     public string Title => Announcement.Title;

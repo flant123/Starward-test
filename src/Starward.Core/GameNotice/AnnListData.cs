@@ -70,3 +70,27 @@ public class AnnTypeInfo
     public string Mi18nName { get; set; } = "";
 
 }
+
+
+/// <summary>
+/// getAnnContent 接口响应中的 data 部分
+/// </summary>
+public class AnnContentData
+{
+
+    [JsonPropertyName("list")]
+    public List<AnnContentItem> List { get; set; } = [];
+
+}
+
+
+public class AnnContentItem
+{
+
+    /// <summary>
+    /// 公告内容 HTML
+    /// </summary>
+    [JsonPropertyName("content")]
+    public string Content { get; set; } = "";
+
+}

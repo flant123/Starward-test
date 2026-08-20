@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Vanara.PInvoke;
 using Windows.Graphics;
@@ -466,15 +467,12 @@ public sealed partial class ActivityCalendarWindow : WindowEx
             }
 
             // 进行中（按结束时间升序，快结束的在前）→ 即将开始（按开始时间升序）→ 已结束（按结束时间降序，最近结束的在前）
-            foreach (var item in ongoing.OrderBy(i => i.Announcement.EndTimeOffset))
-            {
-                Activities.Add(item);
-            }
-            foreach (var item in upcoming.OrderBy(i => i.Announcement.StartTimeOffset))
-            {
-                Activities.Add(item);
-            }
-            foreach (var item in ended.OrderByDescending(i => i.Announcement.EndTimeOffset))
+            // 祈愿/调频类活动置顶
+            var ordered = new List<ActivityCalendarItem>();
+            ordered.AddRange(ongoing.OrderBy(i => i.Announcement.EndTimeOffset));
+            ordered.AddRange(upcoming.OrderBy(i => i.Announcement.StartTimeOffset));
+            ordered.AddRange(ended.OrderByDescending(i => i.Announcement.EndTimeOffset));
+            foreach (var item in ordered.OrderByDescending(i => i.IsGacha))
             {
                 Activities.Add(item);
             }
@@ -586,6 +584,60 @@ public sealed partial class ActivityCalendarWindow : WindowEx
             dot.Tag = blinkStoryboard;
             blinkStoryboard.Begin();
         }
+
+        // 异步加载活动详情中的资源图片
+        _ = LoadRewardImagesAsync(item);
+    }
+
+
+
+    /// <summary>
+    /// 从活动公告内容中提取资源图片，显示在条目右侧
+    /// </summary>
+    private async Task LoadRewardImagesAsync(ActivityCalendarItem item)
+    {
+        if (item.RewardImagesRequested)
+        {
+            return;
+        }
+        item.RewardImagesRequested = true;
+        try
+        {
+            string? content = await _gameNoticeService.GetActivityContentAsync(CurrentGameBiz, item.Announcement.AnnId);
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return;
+            }
+            var urls = ExtractImageUrls(content)
+                .Where(url => !string.Equals(url, item.Banner, StringComparison.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Take(3)
+                .ToList();
+            foreach (var url in urls)
+            {
+                item.RewardImageUrls.Add(url);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Load reward images ({AnnId})", item.Announcement.AnnId);
+        }
+    }
+
+
+
+    private static List<string> ExtractImageUrls(string html)
+    {
+        var urls = new List<string>();
+        foreach (Match match in Regex.Matches(html, "<img[^>]+(?:src|data-src)=[\"']([^\"']+)[\"']", RegexOptions.IgnoreCase))
+        {
+            string url = match.Groups[1].Value;
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == Uri.UriSchemeHttp))
+            {
+                urls.Add(url);
+            }
+        }
+        return urls;
     }
 
 

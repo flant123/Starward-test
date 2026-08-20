@@ -99,6 +99,18 @@ public class GameNoticeClient
 
 
     /// <summary>
+    /// 获取公告内容 HTML（getAnnContent 接口），失败时返回 null
+    /// </summary>
+    public async Task<string?> GetAnnContentAsync(GameBiz biz, long uid, int annId, string? lang = null, CancellationToken cancellationToken = default)
+    {
+        string url = GetAnnContentUrl(biz, annId, uid, lang);
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        var data = await CommonSendAsync<AnnContentData>(request, cancellationToken);
+        return data.List.FirstOrDefault()?.Content;
+    }
+
+
+    /// <summary>
     /// 获取游戏活动列表（活动日历数据源），按开始时间升序排列。
     /// 优先取各游戏的活动公告类型；无独立活动类型的游戏（如星穹铁道）取全部带有效时间的公告。
     /// </summary>
