@@ -18,120 +18,130 @@
 
         <Grid.Resources>
 
+            <!--  奖励图标槽（黑色描边 + 金色边框 + 圆角方形）  -->
+            <Style x:Key="RewardSlotStyle" TargetType="Border">
+                <Setter Property="Width" Value="26" />
+                <Setter Property="Height" Value="26" />
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="Background" Value="#FF0E1012" />
+                <Setter Property="BorderBrush" Value="#FFD4AF37" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+
             <!--  圆形进入按钮（黑色圆 + 银灰金属边框 + 白色箭头，悬停发光旋转）  -->
             <Style x:Key="MetalCircleButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="36" />
-            <Setter Property="Height" Value="36" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="#FF101010" />
-            <Setter Property="BorderBrush" Value="#FF9AA0A8" />
-            <Setter Property="BorderThickness" Value="1.5" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border x:Name="ButtonBorder"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="18">
-                                <ContentPresenter x:Name="ButtonContent"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                    <ContentPresenter.RenderTransform>
-                                        <RotateTransform x:Name="ContentRotate" Angle="0" />
-                                    </ContentPresenter.RenderTransform>
-                                </ContentPresenter>
-                            </Border>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ContentRotate"
-                                                             Storyboard.TargetProperty="Angle"
-                                                             To="0"
-                                                             Duration="0:0:0.18" />
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF9AA0A8" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ContentRotate"
-                                                             Storyboard.TargetProperty="Angle"
-                                                             To="90"
-                                                             Duration="0:0:0.18" />
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFB347" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderThickness">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="2" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF353535" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                <Setter Property="Width" Value="36" />
+                <Setter Property="Height" Value="36" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="#FF101010" />
+                <Setter Property="BorderBrush" Value="#FF9AA0A8" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border x:Name="ButtonBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="18">
+                                    <ContentPresenter x:Name="ButtonContent"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                        <ContentPresenter.RenderTransform>
+                                            <RotateTransform x:Name="ContentRotate" Angle="0" />
+                                        </ContentPresenter.RenderTransform>
+                                    </ContentPresenter>
+                                </Border>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="ContentRotate"
+                                                                 Storyboard.TargetProperty="Angle"
+                                                                 To="0"
+                                                                 Duration="0:0:0.18" />
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderBrush">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="#FF9AA0A8" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="ContentRotate"
+                                                                 Storyboard.TargetProperty="Angle"
+                                                                 To="90"
+                                                                 Duration="0:0:0.18" />
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderBrush">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFB347" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="BorderThickness">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="2" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="#FF353535" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
 
-        <!--  金属小按钮（刷新）  -->
-        <Style x:Key="MetalIconButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="30" />
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="#FF1A1D21" />
-            <Setter Property="BorderBrush" Value="#FF5A6068" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="15" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border x:Name="BtnBorder"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="15">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFB347" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#FF30353C" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+            <!--  金属小按钮（刷新）  -->
+            <Style x:Key="MetalIconButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="30" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="#FF1A1D21" />
+                <Setter Property="BorderBrush" Value="#FF5A6068" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="15" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border x:Name="BtnBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="15">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="BorderBrush">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFB347" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BtnBorder" Storyboard.TargetProperty="Background">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="#FF30353C" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
         </Grid.Resources>
 
@@ -299,7 +309,7 @@
         </Grid>
 
 
-        <!-- ================= 时间轴（6 周） ================= -->
+        <!-- ================= 时间轴（连续机械轨道，代码生成） ================= -->
 
         <Grid x:Name="TimelineGrid"
               Grid.Row="1"
@@ -313,15 +323,6 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-
-            <!--  周标签（代码生成）  -->
-
-            <!--  时间轴底部刻度线  -->
-            <Border Grid.ColumnSpan="6"
-                    Height="1"
-                    Margin="0,0,0,4"
-                    VerticalAlignment="Bottom"
-                    Background="#3D5A6068" />
         </Grid>
 
 
@@ -341,8 +342,8 @@
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:ActivityCalendarItem">
                             <Grid x:Name="CardRoot"
-                                  Padding="14,10,14,10"
-                                  ColumnSpacing="14"
+                                  Padding="0"
+                                  ColumnSpacing="0"
                                   Background="{x:Bind CardBrush}"
                                   BorderBrush="{x:Bind CardBorderBrush}"
                                   BorderThickness="1"
@@ -354,102 +355,158 @@
                                   Tapped="ActivityItem_Tapped">
 
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="4" />
+                                    <ColumnDefinition Width="62" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!--  左侧：活动图标/横幅  -->
-                                <Grid Grid.Column="0" Width="64" Height="64">
-                                    <Border Width="64"
-                                            Height="64"
-                                            Background="#22000000"
-                                            BorderBrush="#668A8F98"
-                                            BorderThickness="1"
+                                <!--  左侧橙红强调条（进行中）  -->
+                                <Rectangle Grid.Column="0"
+                                           RadiusX="2"
+                                           RadiusY="2"
+                                           Fill="{x:Bind AccentStripBrush}" />
+
+                                <!--  封面图（小尺寸圆角矩形，黑色描边 + 金属边框）  -->
+                                <Grid Grid.Column="1"
+                                      Width="52"
+                                      Height="34"
+                                      Margin="8,6,4,6"
+                                      VerticalAlignment="Center">
+                                    <Border Width="52"
+                                            Height="34"
+                                            Background="#FF0A0B0D"
+                                            BorderBrush="#FF000000"
+                                            BorderThickness="2"
                                             CornerRadius="6">
-                                        <sc:CachedImage Source="{x:Bind Banner}"
-                                                        Stretch="UniformToFill"
-                                                        CornerRadius="6" />
+                                        <Border BorderBrush="#FF5A6068"
+                                                BorderThickness="1"
+                                                CornerRadius="5">
+                                            <sc:CachedImage Source="{x:Bind Banner}"
+                                                            Stretch="UniformToFill"
+                                                            CornerRadius="5" />
+                                        </Border>
                                     </Border>
                                     <!--  已结束完成勾选  -->
-                                    <Border Width="20"
-                                            Height="20"
+                                    <Border Width="17"
+                                            Height="17"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Bottom"
                                             Background="#FF23262A"
                                             BorderBrush="#FF8A8F98"
                                             BorderThickness="1"
-                                            CornerRadius="10"
+                                            CornerRadius="9"
                                             Visibility="{x:Bind ShowCheckmark}">
                                         <FontIcon HorizontalAlignment="Center"
                                                   VerticalAlignment="Center"
-                                                  FontSize="10"
+                                                  FontSize="9"
                                                   Foreground="#FFD5D9DE"
                                                   Glyph="&#xE73E;"
                                                   IsTextScaleFactorEnabled="False" />
                                     </Border>
                                     <!--  新活动闪烁提示  -->
                                     <Ellipse x:Name="NewActivityDot"
-                                             Width="9"
-                                             Height="9"
-                                             Margin="0,0,-3,0"
+                                             Width="8"
+                                             Height="8"
+                                             Margin="0,0,-2,0"
                                              HorizontalAlignment="Right"
                                              VerticalAlignment="Top"
                                              Fill="#FFFF4B45"
                                              Visibility="{x:Bind IsNew}" />
                                 </Grid>
 
-                                <!--  中间：活动名称 + 时间  -->
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                <!--  中间信息（三行高密度）  -->
+                                <StackPanel Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Spacing="2">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
                                         <TextBlock MaxLines="1"
-                                                   FontSize="16"
-                                                   FontWeight="SemiBold"
-                                                   CharacterSpacing="30"
-                                                   Foreground="#FFF2F3F5"
+                                                   FontSize="15"
+                                                   FontWeight="Bold"
+                                                   CharacterSpacing="40"
+                                                   Foreground="#FFFAFBFC"
                                                    Text="{x:Bind Title}"
                                                    TextTrimming="CharacterEllipsis" />
-                                        <Ellipse Width="8"
-                                                 Height="8"
+                                        <Ellipse Width="7"
+                                                 Height="7"
                                                  VerticalAlignment="Center"
                                                  Fill="{x:Bind StatusDotBrush}"
                                                  Visibility="{x:Bind ShowStatusDot}" />
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="14">
-                                        <TextBlock FontSize="12"
-                                                   CharacterSpacing="20"
-                                                   Foreground="#B3E8EAED"
-                                                   Text="{x:Bind TimeRangeText}" />
-                                        <TextBlock FontSize="12"
+                                    <TextBlock FontSize="11"
+                                               CharacterSpacing="20"
+                                               Foreground="#99E8EAED"
+                                               Text="{x:Bind TimeRangeText}" />
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <TextBlock FontSize="11"
                                                    FontWeight="SemiBold"
                                                    CharacterSpacing="20"
                                                    Foreground="#FFE8C36A"
                                                    Text="{x:Bind RemainingText}" />
-                                        <TextBlock FontSize="11"
-                                                   CharacterSpacing="20"
-                                                   Foreground="#8CE8EAED"
+                                        <TextBlock FontSize="10.5"
+                                                   CharacterSpacing="30"
+                                                   Foreground="#66E8EAED"
                                                    Text="{x:Bind TagLabel}" />
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!--  右侧：状态 + 进入按钮  -->
-                                <StackPanel Grid.Column="2"
+                                <!--  右侧：奖励图标 + 状态 + 机械按钮  -->
+                                <StackPanel Grid.Column="3"
+                                            Margin="0,0,10,0"
                                             VerticalAlignment="Center"
                                             Orientation="Horizontal"
-                                            Spacing="14">
-                                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                                            Spacing="10">
+                                    <!--  奖励展示区（浮动动画）  -->
+                                    <StackPanel x:Name="RewardPanel"
+                                                VerticalAlignment="Center"
+                                                Orientation="Horizontal"
+                                                Spacing="4">
+                                        <StackPanel.RenderTransform>
+                                            <TranslateTransform x:Name="RewardFloat" Y="0" />
+                                        </StackPanel.RenderTransform>
+                                        <Border Style="{StaticResource RewardSlotStyle}">
+                                            <FontIcon HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="12"
+                                                      Foreground="#FFE8C36A"
+                                                      Glyph="&#xE734;"
+                                                      IsTextScaleFactorEnabled="False" />
+                                        </Border>
+                                        <Border Style="{StaticResource RewardSlotStyle}">
+                                            <FontIcon HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="12"
+                                                      Foreground="#FFE8C36A"
+                                                      Glyph="&#xE8E7;"
+                                                      IsTextScaleFactorEnabled="False" />
+                                        </Border>
+                                        <Border Style="{StaticResource RewardSlotStyle}">
+                                            <FontIcon HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      FontSize="12"
+                                                      Foreground="#FFE8C36A"
+                                                      Glyph="&#xE74C;"
+                                                      IsTextScaleFactorEnabled="False" />
+                                        </Border>
+                                    </StackPanel>
+                                    <!--  状态文字  -->
+                                    <StackPanel MinWidth="46"
+                                                VerticalAlignment="Center"
+                                                Spacing="2">
                                         <TextBlock HorizontalAlignment="Right"
                                                    FontSize="11"
-                                                   FontWeight="SemiBold"
+                                                   FontWeight="Bold"
                                                    CharacterSpacing="60"
                                                    Foreground="{x:Bind StatusBrush}"
                                                    Text="{x:Bind StatusText}" />
-                                        <Border Height="2"
+                                        <Border Width="36"
+                                                Height="2"
                                                 HorizontalAlignment="Right"
-                                                CornerRadius="1"
                                                 Background="{x:Bind StatusBrush}"
-                                                Opacity="0.55" />
+                                                CornerRadius="1"
+                                                Opacity="0.5" />
                                     </StackPanel>
+                                    <!--  机械进入按钮  -->
                                     <Button Click="EnterButton_Click"
                                             Style="{StaticResource MetalCircleButtonStyle}"
                                             ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_OpenDetail}">
@@ -462,8 +519,8 @@
 
                                 <!--  悬停高亮覆盖层  -->
                                 <Border x:Name="HoverOverlay"
-                                        Grid.ColumnSpan="3"
-                                        Background="#14FFFFFF"
+                                        Grid.ColumnSpan="4"
+                                        Background="#12FFFFFF"
                                         CornerRadius="8"
                                         IsHitTestVisible="False"
                                         Opacity="0" />

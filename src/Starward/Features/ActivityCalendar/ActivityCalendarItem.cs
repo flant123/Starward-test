@@ -111,7 +111,7 @@ public class ActivityCalendarItem
 
 
     /// <summary>
-    /// 活动条背景渐变（左深右亮）
+    /// 活动条基底（深色金属，橙色仅作强调）
     /// </summary>
     public Brush CardBrush => Status switch
     {
@@ -123,7 +123,19 @@ public class ActivityCalendarItem
 
 
     /// <summary>
-    /// 活动条金属边框
+    /// 活动条左侧强调条（进行中为橙红渐变）
+    /// </summary>
+    public Brush AccentStripBrush => Status switch
+    {
+        ActivityStatus.Ongoing => OngoingAccentBrush,
+        ActivityStatus.Upcoming => UpcomingAccentBrush,
+        ActivityStatus.Ended => EndedAccentBrush,
+        _ => UpcomingAccentBrush,
+    };
+
+
+    /// <summary>
+    /// 活动条金属边框（进行中带橙色微光）
     /// </summary>
     public Brush CardBorderBrush => Status switch
     {
@@ -159,6 +171,12 @@ public class ActivityCalendarItem
 
 
     /// <summary>
+    /// 状态点颜色（与状态文字一致）
+    /// </summary>
+    public Brush StatusDotBrush => StatusBrush;
+
+
+    /// <summary>
     /// 新活动（标签为 NEW 或 24 小时内开始）显示红色闪烁提示
     /// </summary>
     public bool IsNew
@@ -174,92 +192,83 @@ public class ActivityCalendarItem
     }
 
 
-    public Brush StatusDotBrush => StatusBrush;
-
-
+    /// <summary>
+    /// 状态文字颜色：进行中黄色、即将开始灰色、已结束暗灰
+    /// </summary>
     public Brush StatusBrush => Status switch
     {
         ActivityStatus.Ongoing => new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xC9, 0x3D)),
         ActivityStatus.Upcoming => new SolidColorBrush(Color.FromArgb(0xFF, 0x9A, 0xA0, 0xA8)),
-        ActivityStatus.Ended => new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0x66, 0x5C)),
+        ActivityStatus.Ended => new SolidColorBrush(Color.FromArgb(0xFF, 0x7A, 0x7A, 0x7A)),
         _ => new SolidColorBrush(Colors.Gray),
     };
 
 
-    // ---- 静态渐变画刷（活动条左深右亮，橙红主色） ----
+    // ---- 静态画刷 ----
 
+    // 活动条基底：深色金属
     private static readonly Brush OngoingCardBrush = new LinearGradientBrush
     {
-        StartPoint = new Windows.Foundation.Point(0, 0.5),
-        EndPoint = new Windows.Foundation.Point(1, 0.5),
+        StartPoint = new Windows.Foundation.Point(0, 0),
+        EndPoint = new Windows.Foundation.Point(1, 1),
         GradientStops =
         {
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x8F, 0x26, 0x0D), Offset = 0.0 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0xC5, 0x43, 0x14), Offset = 0.55 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0x74, 0x28), Offset = 1.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x22, 0x15, 0x10), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x2A, 0x1B, 0x13), Offset = 1.0 },
         }
     };
 
 
     private static readonly Brush UpcomingCardBrush = new LinearGradientBrush
     {
-        StartPoint = new Windows.Foundation.Point(0, 0.5),
-        EndPoint = new Windows.Foundation.Point(1, 0.5),
+        StartPoint = new Windows.Foundation.Point(0, 0),
+        EndPoint = new Windows.Foundation.Point(1, 1),
         GradientStops =
         {
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x22, 0x25, 0x2B), Offset = 0.0 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x2E, 0x32, 0x38), Offset = 0.6 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x3A, 0x3E, 0x45), Offset = 1.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x15, 0x18, 0x1C), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x1B, 0x1F, 0x24), Offset = 1.0 },
         }
     };
 
 
     private static readonly Brush EndedCardBrush = new LinearGradientBrush
     {
-        StartPoint = new Windows.Foundation.Point(0, 0.5),
-        EndPoint = new Windows.Foundation.Point(1, 0.5),
-        GradientStops =
-        {
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x33, 0x2A, 0x22), Offset = 0.0 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x44, 0x36, 0x2A), Offset = 0.6 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x54, 0x42, 0x31), Offset = 1.0 },
-        }
-    };
-
-
-    private static readonly Brush OngoingCardBorderBrush = new LinearGradientBrush
-    {
         StartPoint = new Windows.Foundation.Point(0, 0),
         EndPoint = new Windows.Foundation.Point(1, 1),
         GradientStops =
         {
-            new GradientStop { Color = Color.FromArgb(0xFF, 0xFF, 0x8A, 0x3D), Offset = 0.0 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x5A, 0x1E, 0x0A), Offset = 1.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x13, 0x15, 0x17), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0x17, 0x19, 0x1B), Offset = 1.0 },
         }
     };
 
 
-    private static readonly Brush UpcomingCardBorderBrush = new LinearGradientBrush
+    // 左侧强调条
+    private static readonly Brush OngoingAccentBrush = new LinearGradientBrush
     {
         StartPoint = new Windows.Foundation.Point(0, 0),
-        EndPoint = new Windows.Foundation.Point(1, 1),
+        EndPoint = new Windows.Foundation.Point(0, 1),
         GradientStops =
         {
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x6E, 0x74, 0x7C), Offset = 0.0 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x35, 0x39, 0x3F), Offset = 1.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0xFF, 0x8A, 0x2A), Offset = 0.0 },
+            new GradientStop { Color = Color.FromArgb(0xFF, 0xB2, 0x3A, 0x12), Offset = 1.0 },
         }
     };
 
 
-    private static readonly Brush EndedCardBorderBrush = new LinearGradientBrush
-    {
-        StartPoint = new Windows.Foundation.Point(0, 0),
-        EndPoint = new Windows.Foundation.Point(1, 1),
-        GradientStops =
-        {
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x6E, 0x5C, 0x48), Offset = 0.0 },
-            new GradientStop { Color = Color.FromArgb(0xFF, 0x33, 0x2A, 0x22), Offset = 1.0 },
-        }
-    };
+    private static readonly Brush UpcomingAccentBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x4A, 0x4F, 0x56));
+
+
+    private static readonly Brush EndedAccentBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x36, 0x33, 0x2E));
+
+
+    // 边框
+    private static readonly Brush OngoingCardBorderBrush = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0x7A, 0x2A));
+
+
+    private static readonly Brush UpcomingCardBorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x3E, 0x45));
+
+
+    private static readonly Brush EndedCardBorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x30, 0x2B));
 
 }

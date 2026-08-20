@@ -194,14 +194,14 @@ public sealed partial class ActivityCalendarWindow : WindowEx
 
 
     /// <summary>
-    /// 生成 6 周时间轴标签
+    /// 生成连续机械时间轴（轨道 / 周标签 / 分隔线 / 刻度）
     /// </summary>
     private void BuildTimeline()
     {
         try
         {
-            // 移除旧周标签
-            foreach (var child in TimelineGrid.Children.Where(c => c is FrameworkElement fe && Equals(fe.Tag, "weekCell")).ToList())
+            // 移除旧轨道
+            foreach (var child in TimelineGrid.Children.Where(c => c is FrameworkElement fe && Equals(fe.Tag, "weekRail") || (c is FrameworkElement fe2 && Equals(fe2.Tag, "weekCell"))).ToList())
             {
                 TimelineGrid.Children.Remove(child);
             }
@@ -210,13 +210,38 @@ public sealed partial class ActivityCalendarWindow : WindowEx
             _timelineStart = StartOfWeek(now).AddDays(-14);
             _nowOffsetDays = (now - _timelineStart).TotalDays;
 
-            var normalBackground = new SolidColorBrush(Color.FromArgb(0xFF, 0x17, 0x1A, 0x1E));
-            var normalBorder = new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x3E, 0x45));
             var normalText = new SolidColorBrush(Color.FromArgb(0xFF, 0x9A, 0xA0, 0xA8));
             var accentText = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x8A, 0x4D));
-            var accentBorder = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x6A, 0x2A));
             var currentWeekText = new SolidColorBrush(Color.FromArgb(0xFF, 0xF2, 0xF3, 0xF5));
 
+            // 连续轨道（金属面板）
+            var rail = new Border
+            {
+                Tag = "weekRail",
+                CornerRadius = new CornerRadius(8),
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x3A, 0x3E, 0x45)),
+                BorderThickness = new Thickness(1),
+            };
+            rail.Background = new LinearGradientBrush
+            {
+                StartPoint = new Windows.Foundation.Point(0, 0),
+                EndPoint = new Windows.Foundation.Point(0, 1),
+                GradientStops =
+                {
+                    new GradientStop { Color = Color.FromArgb(0xFF, 0x1A, 0x1D, 0x22), Offset = 0.0 },
+                    new GradientStop { Color = Color.FromArgb(0xFF, 0x11, 0x13, 0x16), Offset = 1.0 },
+                }
+            };
+            var railGrid = new Grid();
+            for (int i = 0; i < WeekCount; i++)
+            {
+                railGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            rail.Child = railGrid;
+            Grid.SetColumnSpan(rail, WeekCount);
+            TimelineGrid.Children.Add(rail);
+
+            // 周标签 + 金属分隔线
             for (int i = 0; i < WeekCount; i++)
             {
                 var weekStart = _timelineStart.AddDays(7 * i);
@@ -225,9 +250,9 @@ public sealed partial class ActivityCalendarWindow : WindowEx
 
                 var panel = new StackPanel
                 {
-                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Tag = "weekCell",
                     VerticalAlignment = VerticalAlignment.Center,
-                    Spacing = 3,
+                    Spacing = 2,
                 };
                 panel.Children.Add(new TextBlock
                 {
@@ -240,27 +265,79 @@ public sealed partial class ActivityCalendarWindow : WindowEx
                 });
                 panel.Children.Add(new TextBlock
                 {
-                    Text = $"{weekStart:MM/dd} - {weekEnd:MM/dd}",
+                    Text = $"{weekStart:MM/dd}-{weekEnd:MM/dd}",
                     FontSize = 11,
                     CharacterSpacing = 30,
                     Foreground = isCurrentWeek ? currentWeekText : normalText,
                     HorizontalAlignment = HorizontalAlignment.Center,
                 });
+                Grid.SetColumn(panel, i);
+                railGrid.Children.Add(panel);
 
-                var border = new Border
+                // 周与周之间的金属分隔线
+                if (i < WeekCount - 1)
                 {
-                    Tag = "weekCell",
-                    Margin = new Thickness(4, 0, 4, 0),
-                    Padding = new Thickness(6, 6, 6, 6),
-                    CornerRadius = new CornerRadius(6),
-                    Background = normalBackground,
-                    BorderBrush = isCurrentWeek ? accentBorder : normalBorder,
-                    BorderThickness = new Thickness(1),
-                    Child = panel,
-                };
-                Grid.SetColumn(border, i);
-                TimelineGrid.Children.Add(border);
+                    var separator = new Rectangle
+                    {
+                        Tag = "weekCell",
+                        Width = 1,
+                        Margin = new Thickness(0, 6, 0, 6),
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        Fill = new SolidColorBrush(Color.FromArgb(0x40, 0x5A, 0x60, 0x68)),
+                    };
+                    Grid.SetColumn(separator, i);
+                    railGrid.Children.Add(separator);
+                }
             }
+
+            // 底部工业刻度条
+            var tickStrip = new Grid
+            {
+                Tag = "weekCell",
+                Height = 8,
+                VerticalAlignment = VerticalAlignment.Bottom,
+            };
+            for (int i = 0; i < WeekCount; i++)
+            {
+                tickStrip.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            var baseline = new Rectangle
+            {
+                Height = 1,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Fill = new SolidColorBrush(Color.FromArgb(0x50, 0x8A, 0x8F, 0x98)),
+            };
+            Grid.SetColumnSpan(baseline, WeekCount);
+            tickStrip.Children.Add(baseline);
+            for (int i = 0; i <= WeekCount; i++)
+            {
+                bool major = i == 0 || i == WeekCount;
+                var tick = new Rectangle
+                {
+                    Width = major ? 2 : 1,
+                    Height = major ? 8 : 5,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Fill = new SolidColorBrush(Color.FromArgb(0x70, 0x8A, 0x8F, 0x98)),
+                };
+                if (i == 0)
+                {
+                    tick.HorizontalAlignment = HorizontalAlignment.Left;
+                    Grid.SetColumn(tick, 0);
+                }
+                else if (i == WeekCount)
+                {
+                    tick.HorizontalAlignment = HorizontalAlignment.Right;
+                    Grid.SetColumn(tick, WeekCount - 1);
+                }
+                else
+                {
+                    tick.HorizontalAlignment = HorizontalAlignment.Right;
+                    Grid.SetColumn(tick, i - 1);
+                }
+                tickStrip.Children.Add(tick);
+            }
+            Grid.SetColumnSpan(tickStrip, WeekCount);
+            railGrid.Children.Add(tickStrip);
 
             TextBlock_NowCapsule.Text = DateTime.Now.ToString("MM/dd");
         }
@@ -451,28 +528,80 @@ public sealed partial class ActivityCalendarWindow : WindowEx
 
     private void CardRoot_Loaded(object sender, RoutedEventArgs e)
     {
-        // 新活动红色闪烁提示
-        if (sender is Grid grid && grid.DataContext is ActivityCalendarItem item && item.IsNew)
+        if (sender is not Grid grid || grid.DataContext is not ActivityCalendarItem item)
         {
-            if (grid.FindName("NewActivityDot") is Ellipse dot && dot.Tag is not Storyboard)
+            return;
+        }
+
+        // 卡片滑入动画（错峰，透明度收敛到该卡片的目标亮度）
+        int index = Activities.IndexOf(item);
+        var translate = new TranslateTransform { Y = 16 };
+        grid.RenderTransform = translate;
+        grid.Opacity = 0;
+        var slideStoryboard = new Storyboard();
+        var moveAnimation = new DoubleAnimation
+        {
+            From = 16,
+            To = 0,
+            Duration = TimeSpan.FromMilliseconds(320),
+            BeginTime = TimeSpan.FromMilliseconds(Math.Min(index * 40, 400)),
+            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
+        };
+        Storyboard.SetTarget(moveAnimation, translate);
+        Storyboard.SetTargetProperty(moveAnimation, "Y");
+        slideStoryboard.Children.Add(moveAnimation);
+        var fadeAnimation = new DoubleAnimation
+        {
+            From = 0,
+            To = item.CardOpacity,
+            Duration = TimeSpan.FromMilliseconds(280),
+            BeginTime = TimeSpan.FromMilliseconds(Math.Min(index * 40, 400)),
+        };
+        Storyboard.SetTarget(fadeAnimation, grid);
+        Storyboard.SetTargetProperty(fadeAnimation, "Opacity");
+        slideStoryboard.Children.Add(fadeAnimation);
+        slideStoryboard.Begin();
+
+        // 新活动红色闪烁提示
+        if (item.IsNew && grid.FindName("NewActivityDot") is Ellipse dot && dot.Tag is not Storyboard)
+        {
+            var blinkStoryboard = new Storyboard
             {
-                var storyboard = new Storyboard
-                {
-                    AutoReverse = true,
-                    RepeatBehavior = RepeatBehavior.Forever,
-                };
-                var animation = new DoubleAnimation
-                {
-                    From = 1.0,
-                    To = 0.15,
-                    Duration = TimeSpan.FromMilliseconds(600),
-                };
-                Storyboard.SetTarget(animation, dot);
-                Storyboard.SetTargetProperty(animation, "Opacity");
-                storyboard.Children.Add(animation);
-                dot.Tag = storyboard;
-                storyboard.Begin();
-            }
+                AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever,
+            };
+            var blinkAnimation = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 0.15,
+                Duration = TimeSpan.FromMilliseconds(600),
+            };
+            Storyboard.SetTarget(blinkAnimation, dot);
+            Storyboard.SetTargetProperty(blinkAnimation, "Opacity");
+            blinkStoryboard.Children.Add(blinkAnimation);
+            dot.Tag = blinkStoryboard;
+            blinkStoryboard.Begin();
+        }
+
+        // 奖励图标轻微浮动
+        if (grid.FindName("RewardPanel") is StackPanel rewardPanel && rewardPanel.RenderTransform is TranslateTransform rewardFloat && rewardPanel.Tag is not Storyboard)
+        {
+            var floatStoryboard = new Storyboard
+            {
+                AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever,
+            };
+            var floatAnimation = new DoubleAnimation
+            {
+                From = 0,
+                To = -2,
+                Duration = TimeSpan.FromMilliseconds(1200),
+            };
+            Storyboard.SetTarget(floatAnimation, rewardFloat);
+            Storyboard.SetTargetProperty(floatAnimation, "Y");
+            floatStoryboard.Children.Add(floatAnimation);
+            rewardPanel.Tag = floatStoryboard;
+            floatStoryboard.Begin();
         }
     }
 
