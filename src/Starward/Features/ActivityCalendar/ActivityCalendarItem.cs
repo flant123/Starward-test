@@ -88,6 +88,12 @@ public class ActivityCalendarItem
 
 
     /// <summary>
+    /// 悬停提示（完整信息，窄条时仍有详情）
+    /// </summary>
+    public string TooltipText => $"{Title}\n{TimeRangeText}\n{StatusText} · {RemainingText}";
+
+
+    /// <summary>
     /// 剩余/开启时间提示，如「剩余 5 天」「3 天后开启」
     /// </summary>
     public string RemainingText

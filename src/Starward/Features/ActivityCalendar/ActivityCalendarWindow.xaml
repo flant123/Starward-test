@@ -296,16 +296,6 @@
                            Text="ACTIVITY CONTROL // SW-CAL"
                            IsTextScaleFactorEnabled="False" />
             </StackPanel>
-            <Button Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Command="{x:Bind RefreshCommand}"
-                    Style="{StaticResource MetalIconButtonStyle}"
-                    ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_Refresh}">
-                <FontIcon FontSize="12"
-                          Foreground="#FFC8CDD3"
-                          Glyph="&#xE72C;"
-                          IsTextScaleFactorEnabled="False" />
-            </Button>
         </Grid>
 
 
@@ -337,191 +327,68 @@
                           VerticalScrollMode="Auto">
                 <ItemsRepeater x:Name="ActivityRepeater" ItemsSource="{x:Bind Activities}">
                     <ItemsRepeater.Layout>
-                        <StackLayout Spacing="10" />
+                        <local:TimelineGanttLayout x:Name="GanttLayout" />
                     </ItemsRepeater.Layout>
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:ActivityCalendarItem">
                             <Grid x:Name="CardRoot"
-                                  Padding="0"
-                                  ColumnSpacing="0"
                                   Background="{x:Bind CardBrush}"
                                   BorderBrush="{x:Bind CardBorderBrush}"
                                   BorderThickness="1"
-                                  CornerRadius="8"
+                                  CornerRadius="6"
                                   Loaded="CardRoot_Loaded"
                                   Opacity="{x:Bind CardOpacity}"
                                   PointerEntered="Card_PointerEntered"
                                   PointerExited="Card_PointerExited"
-                                  Tapped="ActivityItem_Tapped">
+                                  Tapped="ActivityItem_Tapped"
+                                  ToolTipService.ToolTip="{x:Bind TooltipText}">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="4" />
-                                    <ColumnDefinition Width="62" />
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!--  左侧橙红强调条（进行中）  -->
+                                <!--  左侧状态强调条  -->
                                 <Rectangle Grid.Column="0"
                                            RadiusX="2"
                                            RadiusY="2"
                                            Fill="{x:Bind AccentStripBrush}" />
 
-                                <!--  封面图（小尺寸圆角矩形，黑色描边 + 金属边框）  -->
-                                <Grid Grid.Column="1"
-                                      Width="52"
-                                      Height="34"
-                                      Margin="8,6,4,6"
-                                      VerticalAlignment="Center">
-                                    <Border Width="52"
-                                            Height="34"
-                                            Background="#FF0A0B0D"
-                                            BorderBrush="#FF000000"
-                                            BorderThickness="2"
-                                            CornerRadius="6">
-                                        <Border BorderBrush="#FF5A6068"
-                                                BorderThickness="1"
-                                                CornerRadius="5">
-                                            <sc:CachedImage Source="{x:Bind Banner}"
-                                                            Stretch="UniformToFill"
-                                                            CornerRadius="5" />
-                                        </Border>
-                                    </Border>
-                                    <!--  已结束完成勾选  -->
-                                    <Border Width="17"
-                                            Height="17"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Bottom"
-                                            Background="#FF23262A"
-                                            BorderBrush="#FF8A8F98"
-                                            BorderThickness="1"
-                                            CornerRadius="9"
-                                            Visibility="{x:Bind ShowCheckmark}">
-                                        <FontIcon HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"
-                                                  FontSize="9"
-                                                  Foreground="#FFD5D9DE"
-                                                  Glyph="&#xE73E;"
-                                                  IsTextScaleFactorEnabled="False" />
-                                    </Border>
-                                    <!--  新活动闪烁提示  -->
-                                    <Ellipse x:Name="NewActivityDot"
-                                             Width="8"
-                                             Height="8"
-                                             Margin="0,0,-2,0"
-                                             HorizontalAlignment="Right"
-                                             VerticalAlignment="Top"
-                                             Fill="#FFFF4B45"
-                                             Visibility="{x:Bind IsNew}" />
-                                </Grid>
-
-                                <!--  中间信息（三行高密度）  -->
-                                <StackPanel Grid.Column="2"
+                                <!--  活动标题  -->
+                                <StackPanel Grid.Column="1"
+                                            Margin="8,0,8,0"
                                             VerticalAlignment="Center"
-                                            Spacing="2">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock MaxLines="1"
-                                                   FontSize="15"
-                                                   FontWeight="Bold"
-                                                   CharacterSpacing="40"
-                                                   Foreground="#FFFAFBFC"
-                                                   Text="{x:Bind Title}"
-                                                   TextTrimming="CharacterEllipsis" />
-                                        <Ellipse Width="7"
-                                                 Height="7"
-                                                 VerticalAlignment="Center"
-                                                 Fill="{x:Bind StatusDotBrush}"
-                                                 Visibility="{x:Bind ShowStatusDot}" />
-                                    </StackPanel>
-                                    <TextBlock FontSize="11"
+                                            Spacing="1">
+                                    <TextBlock MaxLines="1"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
                                                CharacterSpacing="20"
+                                               Foreground="#FFF2F3F5"
+                                               Text="{x:Bind Title}"
+                                               TextTrimming="CharacterEllipsis" />
+                                    <TextBlock MaxLines="1"
+                                               FontSize="10"
+                                               CharacterSpacing="10"
                                                Foreground="#99E8EAED"
-                                               Text="{x:Bind TimeRangeText}" />
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <TextBlock FontSize="11"
-                                                   FontWeight="SemiBold"
-                                                   CharacterSpacing="20"
-                                                   Foreground="#FFE8C36A"
-                                                   Text="{x:Bind RemainingText}" />
-                                        <TextBlock FontSize="10.5"
-                                                   CharacterSpacing="30"
-                                                   Foreground="#66E8EAED"
-                                                   Text="{x:Bind TagLabel}" />
-                                    </StackPanel>
+                                               Text="{x:Bind TimeRangeText}"
+                                               TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
 
-                                <!--  右侧：奖励图标 + 状态 + 机械按钮  -->
-                                <StackPanel Grid.Column="3"
-                                            Margin="0,0,10,0"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal"
-                                            Spacing="10">
-                                    <!--  奖励展示区（浮动动画）  -->
-                                    <StackPanel x:Name="RewardPanel"
-                                                VerticalAlignment="Center"
-                                                Orientation="Horizontal"
-                                                Spacing="4">
-                                        <StackPanel.RenderTransform>
-                                            <TranslateTransform x:Name="RewardFloat" Y="0" />
-                                        </StackPanel.RenderTransform>
-                                        <Border Style="{StaticResource RewardSlotStyle}">
-                                            <FontIcon HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"
-                                                      FontSize="12"
-                                                      Foreground="#FFE8C36A"
-                                                      Glyph="&#xE734;"
-                                                      IsTextScaleFactorEnabled="False" />
-                                        </Border>
-                                        <Border Style="{StaticResource RewardSlotStyle}">
-                                            <FontIcon HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"
-                                                      FontSize="12"
-                                                      Foreground="#FFE8C36A"
-                                                      Glyph="&#xE8E7;"
-                                                      IsTextScaleFactorEnabled="False" />
-                                        </Border>
-                                        <Border Style="{StaticResource RewardSlotStyle}">
-                                            <FontIcon HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"
-                                                      FontSize="12"
-                                                      Foreground="#FFE8C36A"
-                                                      Glyph="&#xE74C;"
-                                                      IsTextScaleFactorEnabled="False" />
-                                        </Border>
-                                    </StackPanel>
-                                    <!--  状态文字  -->
-                                    <StackPanel MinWidth="46"
-                                                VerticalAlignment="Center"
-                                                Spacing="2">
-                                        <TextBlock HorizontalAlignment="Right"
-                                                   FontSize="11"
-                                                   FontWeight="Bold"
-                                                   CharacterSpacing="60"
-                                                   Foreground="{x:Bind StatusBrush}"
-                                                   Text="{x:Bind StatusText}" />
-                                        <Border Width="36"
-                                                Height="2"
-                                                HorizontalAlignment="Right"
-                                                Background="{x:Bind StatusBrush}"
-                                                CornerRadius="1"
-                                                Opacity="0.5" />
-                                    </StackPanel>
-                                    <!--  机械进入按钮  -->
-                                    <Button Click="EnterButton_Click"
-                                            Style="{StaticResource MetalCircleButtonStyle}"
-                                            ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_OpenDetail}">
-                                        <FontIcon FontSize="12"
-                                                  Foreground="#FFFFFFFF"
-                                                  Glyph="&#xE72A;"
-                                                  IsTextScaleFactorEnabled="False" />
-                                    </Button>
-                                </StackPanel>
+                                <!--  新活动闪烁提示  -->
+                                <Ellipse x:Name="NewActivityDot"
+                                         Width="7"
+                                         Height="7"
+                                         Margin="0,2,2,0"
+                                         HorizontalAlignment="Right"
+                                         VerticalAlignment="Top"
+                                         Fill="#FFFF4B45"
+                                         Visibility="{x:Bind IsNew}" />
 
                                 <!--  悬停高亮覆盖层  -->
                                 <Border x:Name="HoverOverlay"
-                                        Grid.ColumnSpan="4"
+                                        Grid.ColumnSpan="2"
                                         Background="#12FFFFFF"
-                                        CornerRadius="8"
+                                        CornerRadius="6"
                                         IsHitTestVisible="False"
                                         Opacity="0" />
                             </Grid>
@@ -539,6 +406,19 @@
                        Foreground="#8CE8EAED"
                        Text="{x:Bind lang:Lang.ActivityCalendar_NoActivities}"
                        Visibility="Collapsed" />
+
+            <!--  刷新按钮（右下角，避开窗口关闭键）  -->
+            <Button Margin="0,0,36,28"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind RefreshCommand}"
+                    Style="{StaticResource MetalIconButtonStyle}"
+                    ToolTipService.ToolTip="{x:Bind lang:Lang.ActivityCalendar_Refresh}">
+                <FontIcon FontSize="12"
+                          Foreground="#FFC8CDD3"
+                          Glyph="&#xE72C;"
+                          IsTextScaleFactorEnabled="False" />
+            </Button>
         </Grid>
 
 

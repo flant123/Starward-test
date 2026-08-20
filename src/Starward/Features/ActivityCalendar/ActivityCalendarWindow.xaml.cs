@@ -290,14 +290,15 @@ public sealed partial class ActivityCalendarWindow : WindowEx
                 }
             }
 
-            // 底部工业刻度条
+            // 底部日刻度条（一个刻度代表一天，周边界加长醒目）
+            int dayCount = WeekCount * 7;
             var tickStrip = new Grid
             {
                 Tag = "weekCell",
-                Height = 8,
+                Height = 10,
                 VerticalAlignment = VerticalAlignment.Bottom,
             };
-            for (int i = 0; i < WeekCount; i++)
+            for (int i = 0; i < dayCount; i++)
             {
                 tickStrip.ColumnDefinitions.Add(new ColumnDefinition());
             }
@@ -305,29 +306,29 @@ public sealed partial class ActivityCalendarWindow : WindowEx
             {
                 Height = 1,
                 VerticalAlignment = VerticalAlignment.Bottom,
-                Fill = new SolidColorBrush(Color.FromArgb(0x50, 0x8A, 0x8F, 0x98)),
+                Fill = new SolidColorBrush(Color.FromArgb(0x60, 0x8A, 0x8F, 0x98)),
             };
-            Grid.SetColumnSpan(baseline, WeekCount);
+            Grid.SetColumnSpan(baseline, dayCount);
             tickStrip.Children.Add(baseline);
-            for (int i = 0; i <= WeekCount; i++)
+            for (int i = 0; i <= dayCount; i++)
             {
-                bool major = i == 0 || i == WeekCount;
+                bool major = i % 7 == 0;
                 var tick = new Rectangle
                 {
                     Width = major ? 2 : 1,
-                    Height = major ? 8 : 5,
+                    Height = major ? 10 : 5,
                     VerticalAlignment = VerticalAlignment.Bottom,
-                    Fill = new SolidColorBrush(Color.FromArgb(0x70, 0x8A, 0x8F, 0x98)),
+                    Fill = new SolidColorBrush(Color.FromArgb((byte)(major ? 0xB0 : 0x85), 0x8A, 0x8F, 0x98)),
                 };
                 if (i == 0)
                 {
                     tick.HorizontalAlignment = HorizontalAlignment.Left;
                     Grid.SetColumn(tick, 0);
                 }
-                else if (i == WeekCount)
+                else if (i == dayCount)
                 {
                     tick.HorizontalAlignment = HorizontalAlignment.Right;
-                    Grid.SetColumn(tick, WeekCount - 1);
+                    Grid.SetColumn(tick, dayCount - 1);
                 }
                 else
                 {
@@ -336,8 +337,11 @@ public sealed partial class ActivityCalendarWindow : WindowEx
                 }
                 tickStrip.Children.Add(tick);
             }
-            Grid.SetColumnSpan(tickStrip, WeekCount);
+            Grid.SetColumnSpan(tickStrip, dayCount);
             railGrid.Children.Add(tickStrip);
+
+            // 甘特图布局的时间轴起点与顶部一致
+            GanttLayout.TimelineStart = _timelineStart;
 
             TextBlock_NowCapsule.Text = DateTime.Now.ToString("MM/dd");
         }
@@ -535,16 +539,16 @@ public sealed partial class ActivityCalendarWindow : WindowEx
 
         // 卡片滑入动画（错峰，透明度收敛到该卡片的目标亮度）
         int index = Activities.IndexOf(item);
-        var translate = new TranslateTransform { Y = 16 };
+        var translate = new TranslateTransform { Y = 12 };
         grid.RenderTransform = translate;
         grid.Opacity = 0;
         var slideStoryboard = new Storyboard();
         var moveAnimation = new DoubleAnimation
         {
-            From = 16,
+            From = 12,
             To = 0,
-            Duration = TimeSpan.FromMilliseconds(320),
-            BeginTime = TimeSpan.FromMilliseconds(Math.Min(index * 40, 400)),
+            Duration = TimeSpan.FromMilliseconds(300),
+            BeginTime = TimeSpan.FromMilliseconds(Math.Min(index * 30, 360)),
             EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
         };
         Storyboard.SetTarget(moveAnimation, translate);
@@ -554,8 +558,8 @@ public sealed partial class ActivityCalendarWindow : WindowEx
         {
             From = 0,
             To = item.CardOpacity,
-            Duration = TimeSpan.FromMilliseconds(280),
-            BeginTime = TimeSpan.FromMilliseconds(Math.Min(index * 40, 400)),
+            Duration = TimeSpan.FromMilliseconds(260),
+            BeginTime = TimeSpan.FromMilliseconds(Math.Min(index * 30, 360)),
         };
         Storyboard.SetTarget(fadeAnimation, grid);
         Storyboard.SetTargetProperty(fadeAnimation, "Opacity");
@@ -581,38 +585,6 @@ public sealed partial class ActivityCalendarWindow : WindowEx
             blinkStoryboard.Children.Add(blinkAnimation);
             dot.Tag = blinkStoryboard;
             blinkStoryboard.Begin();
-        }
-
-        // 奖励图标轻微浮动
-        if (grid.FindName("RewardPanel") is StackPanel rewardPanel && rewardPanel.RenderTransform is TranslateTransform rewardFloat && rewardPanel.Tag is not Storyboard)
-        {
-            var floatStoryboard = new Storyboard
-            {
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever,
-            };
-            var floatAnimation = new DoubleAnimation
-            {
-                From = 0,
-                To = -2,
-                Duration = TimeSpan.FromMilliseconds(1200),
-            };
-            Storyboard.SetTarget(floatAnimation, rewardFloat);
-            Storyboard.SetTargetProperty(floatAnimation, "Y");
-            floatStoryboard.Children.Add(floatAnimation);
-            rewardPanel.Tag = floatStoryboard;
-            floatStoryboard.Begin();
-        }
-    }
-
-
-
-
-    private void EnterButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element && element.DataContext is ActivityCalendarItem item)
-        {
-            _ = OpenDetailAsync(item);
         }
     }
 
