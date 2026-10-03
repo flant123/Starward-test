@@ -7,6 +7,17 @@
 
 ---
 
+## [Unreleased] — 养成指南登录状态持久化
+
+### Fixed
+
+- **绝区零养成指南登录状态丢失**：关闭软件后网页登录状态不再保留
+  - 显式依赖 App 启动时设置的持久化目录 `WEBVIEW2_USER_DATA_FOLDER`（`%LOCALAPPDATA%\Starward\webview`）
+  - 新增 **Cookie 导出/恢复**：导航完成后与窗口关闭时导出全部 Cookie（**含会话 Cookie**）到 `<UserDataFolder>\webview-cookies.dat`，下次打开时在导航前写回
+  - 新增 **localStorage / sessionStorage 持久化**：导出到 `<UserDataFolder>\webview-storage.dat`，并通过 `AddScriptToExecuteOnDocumentCreatedAsync` 在页面脚本执行前写回（仅限 mihoyo 域名）
+
+---
+
 ## [0.19.1] — 2026-08-20 同步上游 0.18.2
 
 ### Changed
