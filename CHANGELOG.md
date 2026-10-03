@@ -2,7 +2,26 @@
 
 本文件记录本项目（fork：`flant123/Starward-test`）在**上游 [Scighost/Starward](https://github.com/Scighost/Starward) 基础**上的全部改动。
 
-上游基线：`9cc6f1ce`（`fix: "MaxWidth" should be changed to "Width". (#1919)`）
+- 初始上游基线：`9cc6f1ce`（`fix: "MaxWidth" should be changed to "Width". (#1919)`）
+- 当前同步至：`2fc1dcb9`（上游 0.18.2 + 时长时区修复）
+
+---
+
+## [0.19.1] — 2026-08-20 同步上游 0.18.2
+
+### Changed
+
+- **合并上游 0.18.2**（`git merge 2fc1dcb9`），带来上游新功能：
+  - 游戏时长统计大改版：柱状图、日历热力图、悬浮卡片（`Features/PlayTime/Charts`）
+  - 新增时长统计弹窗 `PlayTimeStatsDialog`、统计服务 `PlayTimeStatsService`
+  - 启动游戏按钮显示游戏运行时长
+  - 时长统计按本地时区区分（`2fc1dcb9`）
+  - Crowdin 多语言翻译更新
+- 活动日历等本地改动全部保留，合并后构建验证 **0 错误**
+
+### Notes
+
+- **跳过**上游提交 `3e2da5ff update hoyoplay api`：该提交为未完成重构（改了 `HoYoPlayClient` API 但未更新 `Starward.RPC` 调用处，上游自身无法编译）。待上游修复后再同步。
 
 ---
 
@@ -57,6 +76,8 @@
 | `e99fb212` | 图片加宽完整显示、条目加大、坐标系对齐、短标题防截断 |
 | `fefbf0a9` | 绝区零新增官方养成指南入口 |
 | `4a726d52` | 养成指南入口移到活动日历图标旁边 |
+| `02b207f4` | 添加本 CHANGELOG |
+| `99f6a2c1` | 合并上游 0.18.2（`Merge commit '2fc1dcb9'`） |
 
 ---
 
